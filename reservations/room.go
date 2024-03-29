@@ -3,6 +3,8 @@
 package reservations
 
 import (
+	"LESGO/db"
+	"fmt"
 	"time"
 )
 
@@ -29,24 +31,18 @@ func convertStringToDatetime(value string) time.Time {
 
 func IsFree(value string) {
 	date := convertStringToDatetime(value)
+	db, _ := db.Connect("user", "password")
 
+	rows, _ := db.Query("SELECT roomId FROM Reservation WHERE date !=", date)
+
+	for rows.Next() {
+		var roomId int
+		_ = rows.Scan(&roomId)
+		rows, _ := db.Query("SELECT name, capacity FROM Room WHERE id =", roomId)
+		rows.Next()
+		var name string
+		var capacity int
+		_ = rows.Scan(&name, &capacity)
+		fmt.Printf("%-15s (Capacité : %d)", name, capacity)
+	}
 }
-
-// db, err := sql.Open(driverName: "mysql", dataSourceName: "user: password@tcp(localhost)")
-// handleErr (err)
-
-// rows, err := db. Query( query: "SELECT id, name FROM test")
-// handleErr(err)
-
-// for rows.Next() {
-// 	var id int
-// 	var name string
-// 	err = rows.Scan(&id, &name)
-// 	handleErr(err)
-// 	fmt. Println(a: "Ligne :", id, name)
-// }
-
-// err = db. Exec( query: "insert into test (name) values (?)", args..: "Margot")
-// if err != nil {
-// 	log. Fatal(err)
-// }
