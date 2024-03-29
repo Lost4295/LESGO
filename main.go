@@ -1,6 +1,7 @@
 package main
 
 import (
+	// "LESGO/web"
 	"bufio"
 	"fmt"
 	"os"
@@ -18,6 +19,10 @@ func showMenu() {
 }
 
 func main() {
+
+	// webInterface := web.Connect()
+	// fmt.Fprintf(webInterface, "Va te fadire enculer Ylango")
+
 	scanner := bufio.NewScanner(os.Stdin)
 	var number int
 	var err error
