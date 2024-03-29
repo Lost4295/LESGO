@@ -23,6 +23,7 @@ func main() {
 	// webInterface := web.Connect()
 	// fmt.Fprintf(webInterface, "Va te fadire enculer Ylango")
 
+	// fmt.Println(time.DateTime)
 	scanner := bufio.NewScanner(os.Stdin)
 	var number int
 	var err error
