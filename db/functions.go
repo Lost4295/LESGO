@@ -12,3 +12,24 @@ func connect(user, password string) (*sql.DB, error) {
 	return db, nil
 	// db.Close
 }
+
+func createTable(db *sql.DB, table string, queryParams string) error {
+	_, err := db.Exec("CREATE TABLE IF NOT EXISTS"+table+" (id INT AUTO_INCREMENT PRIMARY KEY,"+queryParams+")")
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+
+func initDB(db *sql.DB) (*sql.DB, error) {
+	err := createTable(db, "room", "name VARCHAR(255), capacity INT")
+	if err != nil {
+		return db, err
+	}
+	err = createTable(db, "reservation", "room_id INT, date DATETIME")
+	if err != nil {
+		return db, err
+	}
+	return db, nil
+}
