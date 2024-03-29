@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func handleErr(err) {
+func handleErr(err error) {
 	if err != nil {
 		fmt.Println("Erreur : ", err)
 	}
