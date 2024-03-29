@@ -8,6 +8,12 @@ import (
 	"strconv"
 )
 
+func handleErr(err) {
+	if err != nil {
+		fmt.Println("Erreur : ", err)
+	}
+}
+
 func showMenu() {
 	fmt.Println()
 	fmt.Println("1. Lister les salles disponibles")
