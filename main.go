@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"LESGO/db"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func handleErr(err error) {
@@ -28,7 +30,7 @@ func main() {
 
 	// webInterface := web.Connect()
 	// fmt.Fprintf(webInterface, "Va te fadire enculer Ylango")
-
+	db.CreateTest()
 	// fmt.Println(time.DateTime)
 	scanner := bufio.NewScanner(os.Stdin)
 	var number int
