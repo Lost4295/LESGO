@@ -30,8 +30,7 @@ func showMenu() {
 
 func main() {
 
-	webInterface := web.Connect()
-	fmt.Fprintf(webInterface, "Va te fadire enculer Ylango")
+	web.Main()
 	// db.CreateTest()
 	// fmt.Println(time.DateTime)
 	scanner := bufio.NewScanner(os.Stdin)
