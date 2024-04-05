@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Visualiser les réservations</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 5px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Visualiser les réservations</h1>
+    <div>
+        <table class="table table-bordered table-hover">
+            <tr>
+                <th>Numéro de la salle</th>
+                <th>Date</th>
+            </tr>
+            {{range .}}
+            <tr>
+                <td>{{.RoomNumber}}</td>
+                <td>{{.Date}}</td>
+            </tr>
+            {{end}}
+        </table>
+        <div>
+            <a class="btn" href="/home"> Retour</a>
+        </div>
+    </div>
+</html>

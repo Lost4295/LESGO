@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home Page</title>
+    <style>
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 5px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Goodbye!</h1>
+    <div>
+        <button href="/AreYouSure" class="button"  id="button" type="button">Quitter</button>
+        <div>
+            <a class="btn" href="/home"> Retour</a>
+        </div>
+    </div>
+    <div class="modal d-none" id="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <p>Are you sure you want to leave?</p>
+            <button class="button" id="y"type="button">Yes</button>
+            <button class="button" id="n"type="button">No</button>
+        </div>
+    </div>
+    <script>
+        document.getElementById('button').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelector('#modal').classList.remove('d-none');
+        });
+        document.querySelector('#n').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelector('#modal').classList.add('d-none');
+        });
+        document.querySelector('#y').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = `/die`;
+        });
+        </script>
+</html>

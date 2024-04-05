@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home Page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 5px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Salles disponibles</h1>
+    <div>
+        <form>
+            <label for="date">Merci d'entrer une date que vous aimeriez voir :</label>
+            <input type="datetime" id="date" name="date">
+            <input type="submit" value="Rechercher">
+        </form>
+        <table class="table table-bordered table-hover">
+            <tr>
+                <th>Numéro de la salle</th>
+                <th>Capacité</th>
+                <th>Disponibilité</th>
+            </tr>
+            {{range .}}
+            <tr>
+                <td>{{.RoomNumber}}</td>
+                <td>{{.Capacity}}</td>
+                <td>{{.Availability}}</td>
+            </tr>
+            {{end}}
+        </table>
+        <div>
+            <a class="btn" href="/home"> Retour</a>
+        </div>
+    </div>
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const date = document.querySelector('#date').value;
+            window.location.href = `/list_rooms?date=${date}`;
+        });
+    </script>
+</body>

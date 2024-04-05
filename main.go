@@ -1,7 +1,7 @@
 package main
 
 import (
-	// "LESGO/web"
+	"LESGO/web"
 	"bufio"
 	"fmt"
 	"os"
@@ -30,7 +30,7 @@ func showMenu() {
 
 func main() {
 
-	// web.Main()
+	web.Main()
 	db.CreateTest()
 	// fmt.Println(time.DateTime)
 	scanner := bufio.NewScanner(os.Stdin)

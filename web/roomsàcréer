@@ -1,0 +1,10 @@
+/die
+/list_salles
+/list_rooms
+/create_reservation
+/cancel_reservation
+/list_reservations
+/byebye
+/create_reservation?date=${date}&room=${room}
+/cancel_reservation?room=${room}
+/list_rooms?date=${date}

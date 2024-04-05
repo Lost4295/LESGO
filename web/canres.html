@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home Page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 5px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Annuler la réservation</h1>
+    <div>
+        <form>
+            <label for="room">Merci d'entrer le numéro de la salle que vous aimeriez annuler :</label>
+            <select name="room" id="room">
+                {{range .}}
+                <option value="{{.RoomNumber}}">{{.RoomNumber}}</option>
+                {{end}}
+            </select>
+            <input type="submit" value="Annuler">
+        </form>
+        <div>
+            <a class="btn" href="/home"> Retour</a>
+        </div>
+    </div>
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const room = document.querySelector('#room').value;
+            window.location.href = `/cancel_reservation?room=${room}`;
+        });
+    </script>
+</html>
