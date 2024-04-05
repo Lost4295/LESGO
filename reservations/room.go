@@ -9,15 +9,15 @@ import (
 )
 
 type Room struct {
-	Id       int    `json:id`
-	Name     string `json:name`
-	Capacity int    `json:capacity`
+	Id       int    `json:"id"`
+	Name     string `json:"name"`
+	Capacity int    `json:"capacity"`
 }
 
 type Reservation struct {
-	Id     int       `json:id`
-	id int       `json:room_id`
-	Date   time.Time `json:date`
+	Id     int       `json:"id"`
+	roomId int       `json:"room_id"`
+	Date   time.Time `json:"date"`
 }
 
 func convertStringToDatetime(value string) time.Time {
@@ -56,14 +56,14 @@ func ListRooms() {
 		var name string
 		var capacity int
 		_ = rows.Scan(&id, &name, &capacity)
-		fmt.Printf("%d : %-15s (Capacité : %d)", id, name, capacity)
+		fmt.Printf("%d : %-15s (Capacité : %d)\n", id, name, capacity)
 	}
 }
 func CreateReservation(id int, date string) {
 	db, _ := db.Connect("user", "password")
 	defer db.Close()
 	newDate := convertStringToDatetime(date)
-	_, err := db.Exec("INSERT INTO reservation (id, date) VALUES (?, ?)", id, newDate)
+	_, err := db.Exec("INSERT INTO reservation (room_id, date) VALUES (?, ?)", id, newDate)
 	if err != nil {
 		fmt.Println("Erreur lors de la création de la réservation")
 		return
@@ -95,10 +95,10 @@ func ListReservations() {
 	if rows.Next() {
 		for rows.Next() {
 			var id int
-			var room_id int
+			var roomId int
 			var date time.Time
-			_ = rows.Scan(&id, &room_id, &date)
-			fmt.Printf("%d : Salle %d réservée le %s", id, room_id, date)
+			_ = rows.Scan(&id, &roomId, &date)
+			fmt.Printf("%d : Salle %d réservée le %s", id, roomId, date)
 		}
 	} else {
 		fmt.Println("Aucune réservation")

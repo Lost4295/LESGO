@@ -1,6 +1,7 @@
 package db
 
 import (
+	"math/rand"
 	"database/sql"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -18,9 +19,9 @@ func CreateTest() {
 	if err != nil {
 		panic(err)
 	}
-	// for i := 0; i < 10; i++ {
-	// addRoom(db, "Room "+string(i), 10 -i)
-	// }	
+	for i := 0; i < 10; i++ {
+	addRoom(db, "Room", rand.Intn(100))
+	}	
 }
 
 func addRoom(db *sql.DB, name string, capacity int) error {
