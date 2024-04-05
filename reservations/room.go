@@ -59,6 +59,20 @@ func ListRooms() {
 		fmt.Printf("%d : %-15s (Capacité : %d)\n", id, name, capacity)
 	}
 }
+
+func ListRoomsReturn() []Room {
+	db, _ := db.Connect("user", "password")
+	defer db.Close()
+	rows, _ := db.Query("SELECT id, name, capacity FROM room")
+	var rooms []Room
+	for rows.Next() {
+		var room Room
+		_ = rows.Scan(&room.Id, &room.Name, &room.Capacity)
+		rooms = append(rooms, room)
+	}
+	return rooms
+}
+
 func CreateReservation(id int, date string) {
 	db, _ := db.Connect("user", "password")
 	defer db.Close()

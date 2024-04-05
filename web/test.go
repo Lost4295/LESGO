@@ -1,96 +1,87 @@
 package web
 
 import (
+	res "LESGO/reservations"
 	"html/template"
 	"log"
 	"net/http"
-	// "os"
-	"regexp"
+	//"os"
 )
 
-type Page struct {
-	Title string
-	Body  []byte
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("executing homeHandler")
+	renderTemplate(w, r, "home", nil)
 }
 
-// func (p *Page) save() error {
-// 	filename := "web/data"+ p.Title + ".txt"
-// 	return os.WriteFile(filename, p.Body, 0600)
-// }
-
-// func loadPage(title string) (*Page, error) {
-// 	filename := title + ".txt"
-// 	body, err := os.ReadFile(filename)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return &Page{Title: title, Body: body}, nil
-// }
-
-
-func homeHandler(w http.ResponseWriter, r *http.Request, title string) {
-	// p, err := loadPage(title)
-	// if err != nil {
-	// 	http.Redirect(w, r, "/notfound/", http.StatusNotFound)
-	// 	return
-	// }
-	renderTemplate(w, "home", nil)
+func byeHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("executing byeHandler")
+	renderTemplate(w, r, "byebye", nil)
 }
 
-// func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
-// 	p, err := loadPage(title)
-// 	if err != nil {
-// 		http.Redirect(w, r, "/edit/"+title, http.StatusFound)
-// 		return
-// 	}
-// 	renderTemplate(w, "view", p)
-// }
+func roomsHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("executing roomsHandler")
+	data := res.ListRoomsReturn()
+	renderTemplate(w, r, "rooms", data)
+}
 
-// func editHandler(w http.ResponseWriter, r *http.Request, title string) {
-// 	p, err := loadPage(title)
-// 	if err != nil {
-// 		p = &Page{Title: title}
-// 	}
-// 	renderTemplate(w, "edit", p)
-// }
+func availableRoomsHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("executing availableRoomsHandler")
+	renderTemplate(w, r, "avrooms", nil)
+}
 
-// func saveHandler(w http.ResponseWriter, r *http.Request, title string) {
-// 	body := r.FormValue("body")
-// 	p := &Page{Title: title, Body: []byte(body)}
-// 	err := p.save()
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// 	http.Redirect(w, r, "/view/"+title, http.StatusFound)
-// }
+func cancelReservationHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("executing cancelReservationHandler")
+	renderTemplate(w, r, "canres", nil)
+}
+
+func createReservationHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("executing createReservationHandler")
+	renderTemplate(w, r, "createres", nil)
+}
+
+func listReservationsHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("executing listReservationsHandler")
+	renderTemplate(w, r, "listres", nil)
+}
+
+func notFoundHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("executing notFoundHandler")
+	renderTemplate(w, r, "notfound", nil)
+}
+
+func dieHandler(w http.ResponseWriter, r *http.Request) {
+	// http.shutdown()
+}
 
 var templates = template.Must(template.ParseFiles(
-	// "web/edit.html", "web/view.html",
-	"web/home.html"))
+	"web/home.html", "web/avrooms.html",
+	"web/byebye.html", "web/canres.html",
+	"web/createres.html", "web/rooms.html",
+	"web/listres.html", "web/notfound.html"))
 
-func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
-	err := templates.ExecuteTemplate(w, tmpl+".html", p)
+func renderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, data any) {
+	// str := "web/" + tmpl + ".html"
+	htmlstr := tmpl + ".html"
+	// if _, err := os.Stat(str); err != nil {
+		//http.Redirect(w, r, "/notfound", http.StatusNotFound)
+	//	return
+	//}
+	err := templates.ExecuteTemplate(w, htmlstr, data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
-var validPath = regexp.MustCompile("^/home/$")
-
-func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		m := validPath.FindStringSubmatch(r.URL.Path)
-		if m == nil {
-			http.NotFound(w, r)
-			return
-		}
-		fn(w, r, m[0])
-	}
-}
-
 func Main() {
-	http.HandleFunc("/home/", makeHandler(homeHandler))
-
+	http.HandleFunc("/home/", homeHandler)
+	http.HandleFunc("/die", dieHandler)
+	http.HandleFunc("/list_salles", roomsHandler)
+	http.HandleFunc("/available_salles", availableRoomsHandler)
+	http.HandleFunc("/notfound", notFoundHandler)
+	http.HandleFunc("/create_reservation", createReservationHandler)
+	http.HandleFunc("/cancel_reservation", cancelReservationHandler)
+	http.HandleFunc("/list_reservations", listReservationsHandler)
+	http.HandleFunc("/byebye", byeHandler)
+	log.Println("Listening on :8000")
 	go log.Fatal(http.ListenAndServe(":8000", nil))
 }
