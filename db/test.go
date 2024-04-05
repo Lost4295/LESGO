@@ -18,9 +18,9 @@ func CreateTest() {
 	if err != nil {
 		panic(err)
 	}
-	for i := 0; i < 10; i++ {
-	addRoom(db, "Room "+string(i), 10 -i)
-	}	
+	// for i := 0; i < 10; i++ {
+	// addRoom(db, "Room "+string(i), 10 -i)
+	// }	
 }
 
 func addRoom(db *sql.DB, name string, capacity int) error {

@@ -16,7 +16,7 @@ type Room struct {
 
 type Reservation struct {
 	Id     int       `json:id`
-	RoomId int       `json:room_id`
+	id int       `json:room_id`
 	Date   time.Time `json:date`
 }
 
@@ -33,12 +33,12 @@ func IsFree(value string) {
 	date := convertStringToDatetime(value)
 	db, _ := db.Connect("user", "password")
 	defer db.Close()
-	rows, _ := db.Query("SELECT roomId FROM Reservation WHERE date !=", date)
+	rows, _ := db.Query("SELECT id FROM reservation WHERE date !=", date)
 
 	for rows.Next() {
-		var roomId int
-		_ = rows.Scan(&roomId)
-		rows, _ := db.Query("SELECT name, capacity FROM Room WHERE id =", roomId)
+		var id int
+		_ = rows.Scan(&id)
+		rows, _ := db.Query("SELECT name, capacity FROM room WHERE id =", id)
 		rows.Next()
 		var name string
 		var capacity int
@@ -50,7 +50,7 @@ func IsFree(value string) {
 func ListRooms() {
 	db, _ := db.Connect("user", "password")
 	defer db.Close()
-	rows, _ := db.Query("SELECT id, name, capacity FROM Room")
+	rows, _ := db.Query("SELECT id, name, capacity FROM room")
 	for rows.Next() {
 		var id int
 		var name string
@@ -63,7 +63,7 @@ func CreateReservation(id int, date string) {
 	db, _ := db.Connect("user", "password")
 	defer db.Close()
 	newDate := convertStringToDatetime(date)
-	_, err := db.Exec("INSERT INTO Reservation (roomId, date) VALUES (?, ?)", id, newDate)
+	_, err := db.Exec("INSERT INTO reservation (id, date) VALUES (?, ?)", id, newDate)
 	if err != nil {
 		fmt.Println("Erreur lors de la création de la réservation")
 		return
@@ -76,7 +76,7 @@ func DeleteReservation(id int) {
 	db, _ := db.Connect("user", "password")
 	defer db.Close()
 	ListReservations()
-	_, err := db.Exec("DELETE FROM Reservation WHERE id =", id)
+	_, err := db.Exec("DELETE FROM reservation WHERE id =", id)
 	if err != nil {
 		fmt.Println("Erreur lors de la suppression de la réservation")
 		return
@@ -86,14 +86,19 @@ func DeleteReservation(id int) {
 }
 func ListReservations() {
 	db, _ := db.Connect("user", "password")
-	rows, _ := db.Query("SELECT id, roomId, date FROM Reservation")
+	rows, err := db.Query("SELECT id, room_id, date FROM reservation")
+	if err != nil{
+		fmt.Println("Erreur lors de la récupération des réservations")
+		fmt.Println(err)
+		return
+	}
 	if rows.Next() {
 		for rows.Next() {
 			var id int
-			var roomId int
+			var room_id int
 			var date time.Time
-			_ = rows.Scan(&id, &roomId, &date)
-			fmt.Printf("%d : Salle %d réservée le %s", id, roomId, date)
+			_ = rows.Scan(&id, &room_id, &date)
+			fmt.Printf("%d : Salle %d réservée le %s", id, room_id, date)
 		}
 	} else {
 		fmt.Println("Aucune réservation")

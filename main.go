@@ -1,12 +1,12 @@
 package main
 
 import (
-	"LESGO/web"
+	// "LESGO/web"
 	"bufio"
 	"fmt"
 	"os"
 	"strconv"
-	// "LESGO/db"
+	"LESGO/db"
 	res "LESGO/reservations"
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -30,8 +30,8 @@ func showMenu() {
 
 func main() {
 
-	web.Main()
-	// db.CreateTest()
+	// web.Main()
+	db.CreateTest()
 	// fmt.Println(time.DateTime)
 	scanner := bufio.NewScanner(os.Stdin)
 	var number int
