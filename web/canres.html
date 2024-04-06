@@ -18,20 +18,27 @@
     </style>
 </head>
 <body>
+    <div class="container">
+        <div class="row">
+          <div class="col">
     <h1>Annuler la réservation</h1>
+
     <div>
         <form>
             <label for="room">Merci d'entrer le numéro de la salle que vous aimeriez annuler :</label>
-            <select name="room" id="room">
+            <select name="room" id="room" class="form-control">
                 {{range .}}
                 <option value="{{.RoomNumber}}">{{.RoomNumber}}</option>
                 {{end}}
             </select>
-            <input type="submit" value="Annuler">
+            <input type="submit" class="btn btn-success" value="Entrer">
         </form>
         <div>
-            <a class="btn" href="/home"> Retour</a>
+            <a class="btn btn-primary" href="/home"> Retour</a>
         </div>
+    </div>
+    </div>
+    </div>
     </div>
     <script>
         document.querySelector('form').addEventListener('submit', function(e) {

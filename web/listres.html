@@ -19,21 +19,28 @@
 </head>
 <body>
     <h1>Visualiser les réservations</h1>
-    <div>
+    <div class="container">
+        <div class="row">
+        <div class="col">
         <table class="table table-bordered table-hover">
             <tr>
                 <th>Numéro de la salle</th>
                 <th>Date</th>
+                <th>Actions</th>
             </tr>
             {{range .}}
             <tr>
                 <td>{{.RoomNumber}}</td>
                 <td>{{.Date}}</td>
+                <td><a href="/cancel_reservation?room={{.RoomNumber}}">Annuler la réservation</a></td>
             </tr>
             {{end}}
         </table>
+        </div>
+        </div>
+        </div>
         <div>
-            <a class="btn" href="/home"> Retour</a>
+            <a class="btn btn-primary" href="/home"> Retour</a>
         </div>
     </div>
 </html>

@@ -1,53 +1,67 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Home Page</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    />
     <style>
-        .button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            text-align: center;
-            text-decoration: none;
-            font-size: 16px;
-            border-radius: 5px;
-            margin: 10px;
-        }
+      .button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #4caf50;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        font-size: 16px;
+        border-radius: 5px;
+        margin: 10px;
+      }
     </style>
-</head>
-<body>
-    <h1>Salles disponibles</h1>
-    <div>
-        <form>
-            <label for="date">Merci d'entrer une date que vous aimeriez voir :</label>
-            <input type="datetime" id="date" name="date">
-            <input type="submit" value="Rechercher">
-        </form>
-        <table class="table table-bordered table-hover">
-            <tr>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <h1>Salles disponibles</h1>
+          <div>
+            <form>
+              <label for="date">
+                Merci d'entrer une date que vous aimeriez voir :
+              </label>
+              <div class="d-inline">
+                  <input class="form-control" type="datetime-local" id="date" name="date" />
+                  <input class="btn btn-primary" type="submit" value="Rechercher" />
+                </div>
+            </form>
+            <table class="table table-bordered table-hover">
+              <tr>
                 <th>Numéro de la salle</th>
                 <th>Capacité</th>
                 <th>Disponibilité</th>
-            </tr>
-            {{range .}}
-            <tr>
+              </tr>
+              {{range .}}
+              <tr>
                 <td>{{.RoomNumber}}</td>
                 <td>{{.Capacity}}</td>
                 <td>{{.Availability}}</td>
-            </tr>
-            {{end}}
-        </table>
-        <div>
-            <a class="btn" href="/home"> Retour</a>
+              </tr>
+              {{end}}
+            </table>
+            <div>
+              <a class="btn btn-primary" href="/home"> Retour</a>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
     <script>
-        document.querySelector('form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const date = document.querySelector('#date').value;
-            window.location.href = `/available_salles?date=${date}`;
-        });
+      document.querySelector("form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const date = document.querySelector("#date").value;
+        window.location.href = `/available_salles?date=${date}`;
+      });
     </script>
-</body>
+  </body>
+</html>

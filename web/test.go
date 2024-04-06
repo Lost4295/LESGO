@@ -73,6 +73,7 @@ func renderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, data an
 }
 
 func Main() {
+	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/home/", homeHandler)
 	http.HandleFunc("/die", dieHandler)
 	http.HandleFunc("/list_salles", roomsHandler)
