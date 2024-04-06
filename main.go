@@ -1,13 +1,15 @@
 package main
 
 import (
+	"LESGO/db"
+	res "LESGO/reservations"
 	"LESGO/web"
 	"bufio"
 	"fmt"
 	"os"
 	"strconv"
-	"LESGO/db"
-	res "LESGO/reservations"
+	"strings"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -27,10 +29,29 @@ func showMenu() {
 	fmt.Println("6. Quitter")
 	fmt.Println()
 }
-
+const (
+	WHITEONRED =""
+	END    = "\033[0m"
+	ROUGE  = "\033[31;01;51m"
+	GREEN  = "\033[32;01m"
+	BLANC  = "\033[37;07m"
+)
 func main() {
 
-	web.Main()
+	if len(os.Args) == 1 {
+		fmt.Printf("%s[ERROR]%s\n\n%sNo option given.\nPlease select an option on what to launch : the CLI or the WEB app.%s\nUsage of the program : \n%sgo run main.go [CLI|WEB]\n\n%s","1",END,ROUGE,END,GREEN,END)
+		os.Exit(1)
+	} else if len(os.Args) > 2{ 
+		fmt.Printf("%s[ERROR]%s\n\n%sToo much arguments !%s\nUsage of the program : \n%sgo run main.go [CLI|WEB]\n\n%s","1",END,ROUGE,END,GREEN,END)
+		os.Exit(1)
+	}
+	if strings.ToUpper(os.Args[1]) != "WEB" && strings.ToUpper(os.Args[1]) != "CLI" {
+		fmt.Printf("%s[ERROR]%s\n\n%sInvalid option.\nPlease select an option on what to launch : the CLI or the WEB app.%s\nUsage of the program : \n%sgo run main.go [CLI|WEB]\n\n%s","1",END,ROUGE,END,GREEN,END)
+		os.Exit(1)
+	}  
+	if strings.ToUpper(os.Args[1]) == "WEB"{
+		web.Main()
+	}
 	db.CreateTest()
 	// fmt.Println(time.DateTime)
 	scanner := bufio.NewScanner(os.Stdin)
