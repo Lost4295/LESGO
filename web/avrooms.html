@@ -47,6 +47,10 @@
                 <td>{{.Capacity}}</td>
                 <td>{{.Availability}}</td>
               </tr>
+              {{else}}
+              <tr>
+                <td colspan="3">Aucune salle existante.</td>
+              </tr>
               {{end}}
             </table>
             <div>

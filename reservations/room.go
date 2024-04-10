@@ -21,16 +21,17 @@ type Reservation struct {
 }
 
 func convertStringToDatetime(value string) time.Time {
-	layout := "2006-01-02 15:04"
+	layout := "02-01-2006 15:04"
 	date, err := time.Parse(layout, value)
 	if err != nil {
-		panic("TEMPORAIRE") // check si la string est bien faite
+		fmt.Println(err)
+		panic("TEMPORAIRE"+value) // check si la string est bien faite
 	}
 	return date
 }
 
 func ConvertDatetimeToString(datetime time.Time) string {
-	return datetime.Format("2006-01-02 15:04")
+	return datetime.Format("02-01-2006 15:04")
 }
 
 func AreFree(value string) {

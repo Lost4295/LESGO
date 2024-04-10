@@ -34,6 +34,10 @@
                 <td>{{.Date}}</td>
                 <td><a href="/cancel_reservation?room={{.RoomNumber}}">Annuler la réservation</a></td>
             </tr>
+            {{else}}
+            <tr>
+                <td colspan="3">Aucune réservation existante.</td>
+            </tr>
             {{end}}
         </table>
         </div>

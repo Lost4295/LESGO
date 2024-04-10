@@ -27,19 +27,18 @@
           <h1>Créer une réservation</h1>
           <div>
             <form>
-              <label for="date"
-                >Merci d'entrer une date que vous aimeriez réserver :</label
-              >
-              <input type="datetime" class="form-control" id="date" name="date" />
               <label for="room"
                 >Merci d'entrer le numéro de la salle que vous aimeriez réserver
                 :</label
               >
               <select name="room" class="form-control" id="room">
                 {{range .}}
-                <option value="{{.RoomNumber}}">{{.RoomNumber}}</option>
+                <option value="{{.Id}}">{{.Name}} : </option>
                 {{end}}
               </select>
+              <label for="date"
+                >Merci d'entrer la date que vous aimeriez réserver pour la salle :</label>
+              <input type="datetime-local" class="form-control" id="date" name="date" />
               <input class="btn btn-success" type="submit" value="Réserver" />
             </form>
             <div>
