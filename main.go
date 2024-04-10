@@ -29,27 +29,29 @@ func showMenu() {
 	fmt.Println("6. Quitter")
 	fmt.Println()
 }
+
 const (
-	WHITEONRED =""
-	END    = "\033[0m"
-	ROUGE  = "\033[31;01;51m"
-	GREEN  = "\033[32;01m"
-	BLANC  = "\033[37;07m"
+	WHITEONRED = ""
+	END        = "\033[0m"
+	ROUGE      = "\033[31;01;51m"
+	GREEN      = "\033[32;01m"
+	BLANC      = "\033[37;07m"
 )
+
 func main() {
 
 	if len(os.Args) == 1 {
-		fmt.Printf("%s[ERROR]%s\n\n%sNo option given.\nPlease select an option on what to launch : the CLI or the WEB app.%s\nUsage of the program : \n%sgo run main.go [CLI|WEB]\n\n%s","1",END,ROUGE,END,GREEN,END)
+		fmt.Printf("%s[ERROR]%s\n\n%sNo option given.\nPlease select an option on what to launch : the CLI or the WEB app.%s\nUsage of the program : \n%sgo run main.go [CLI|WEB]\n\n%s", "1", END, ROUGE, END, GREEN, END)
 		os.Exit(1)
-	} else if len(os.Args) > 2{ 
-		fmt.Printf("%s[ERROR]%s\n\n%sToo much arguments !%s\nUsage of the program : \n%sgo run main.go [CLI|WEB]\n\n%s","1",END,ROUGE,END,GREEN,END)
+	} else if len(os.Args) > 2 {
+		fmt.Printf("%s[ERROR]%s\n\n%sToo much arguments !%s\nUsage of the program : \n%sgo run main.go [CLI|WEB]\n\n%s", "1", END, ROUGE, END, GREEN, END)
 		os.Exit(1)
 	}
 	if strings.ToUpper(os.Args[1]) != "WEB" && strings.ToUpper(os.Args[1]) != "CLI" {
-		fmt.Printf("%s[ERROR]%s\n\n%sInvalid option.\nPlease select an option on what to launch : the CLI or the WEB app.%s\nUsage of the program : \n%sgo run main.go [CLI|WEB]\n\n%s","1",END,ROUGE,END,GREEN,END)
+		fmt.Printf("%s[ERROR]%s\n\n%sInvalid option.\nPlease select an option on what to launch : the CLI or the WEB app.%s\nUsage of the program : \n%sgo run main.go [CLI|WEB]\n\n%s", "1", END, ROUGE, END, GREEN, END)
 		os.Exit(1)
-	}  
-	if strings.ToUpper(os.Args[1]) == "WEB"{
+	}
+	if strings.ToUpper(os.Args[1]) == "WEB" {
 		web.Main()
 	}
 	db.CreateTest()
@@ -78,18 +80,17 @@ func main() {
 		}
 		break
 	}
-	
+
 	fmt.Println("Option choisie :", number)
 	switch number {
 	case 1:
 		fmt.Println("Liste des salles :")
 		res.ListRooms()
-	case 2: 
+	case 2:
 		fmt.Println("Entrez la date de la réservation sous le format yyyy-mm-dd hh:min :")
-		var date string
-		fmt.Scan(&date)
+		scanner.Scan()
 		fmt.Println("Liste des salles disponibles :")
-		res.IsFree(date)
+		res.AreFree(scanner.Text())
 	case 3:
 		fmt.Println("Créer une réservation")
 		fmt.Print("Entrez le numéro de la salle : ")
