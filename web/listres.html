@@ -24,19 +24,21 @@
         <div class="col">
         <table class="table table-bordered table-hover">
             <tr>
+                <th>Numéro de réservation</th>
                 <th>Numéro de la salle</th>
                 <th>Date</th>
                 <th>Actions</th>
             </tr>
             {{range .}}
             <tr>
+                <td>{{.Id}}</td>
                 <td>{{.RoomNumber}}</td>
                 <td>{{.Date}}</td>
                 <td><a href="/cancel_reservation?room={{.RoomNumber}}">Annuler la réservation</a></td>
             </tr>
             {{else}}
             <tr>
-                <td colspan="3">Aucune réservation existante.</td>
+                <td colspan="4">Aucune réservation existante.</td>
             </tr>
             {{end}}
         </table>

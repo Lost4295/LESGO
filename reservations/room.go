@@ -5,6 +5,7 @@ package reservations
 import (
 	"LESGO/db"
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -20,22 +21,22 @@ type Reservation struct {
 	Date   time.Time `json:"date"`
 }
 
-func convertStringToDatetime(value string) time.Time {
-	layout := "02-01-2006 15:04"
-	date, err := time.Parse(layout, value)
+func ConvertStringToDatetime(value string) time.Time {
+	layout := "2006-01-02 15:04"
+	date, err := time.Parse(layout, strings.Replace(value, "T", " ", 1))
 	if err != nil {
 		fmt.Println(err)
-		panic("TEMPORAIRE"+value) // check si la string est bien faite
+		panic("TEMPORAIRE" + value) // check si la string est bien faite
 	}
 	return date
 }
 
 func ConvertDatetimeToString(datetime time.Time) string {
-	return datetime.Format("02-01-2006 15:04")
+	return datetime.Format("2006-01-02 15:04")
 }
 
 func AreFree(value string) {
-	date := convertStringToDatetime(value)
+	date := ConvertStringToDatetime(value)
 	db, _ := db.Connect("user", "password")
 	defer db.Close()
 	rows, _ := db.Query("SELECT id FROM reservation WHERE date !=", date)
@@ -53,11 +54,16 @@ func AreFree(value string) {
 }
 
 func AreFreeReturn(value string) []Room {
-	date := convertStringToDatetime(value)
+	date := ConvertStringToDatetime(value)
 	db, _ := db.Connect("user", "password")
 	defer db.Close()
 	var freeRooms []Room
-	rows, _ := db.Query("SELECT id FROM reservation WHERE date !=", date)
+	rows, err := db.Query("SELECT id FROM reservation WHERE date !=", date)
+	if err != nil {
+		fmt.Println("Erreur lors de la récupération des réservations")
+		fmt.Println(err)
+		return freeRooms
+	}
 	for rows.Next() {
 		var id int
 		_ = rows.Scan(&id)
@@ -100,7 +106,7 @@ func ListRoomsReturn() []Room {
 func CreateReservation(id int, date string) {
 	db, _ := db.Connect("user", "password")
 	defer db.Close()
-	newDate := convertStringToDatetime(date)
+	newDate := ConvertStringToDatetime(date)
 	_, err := db.Exec("INSERT INTO reservation (room_id, date) VALUES (?, ?)", id, newDate)
 	if err != nil {
 		fmt.Println("Erreur lors de la création de la réservation")
@@ -113,7 +119,7 @@ func CreateReservation(id int, date string) {
 func CreateReservationReturn(id int, date string) int {
 	db, _ := db.Connect("user", "password")
 	defer db.Close()
-	newDate := convertStringToDatetime(date)
+	newDate := ConvertStringToDatetime(date)
 	_, err := db.Exec("INSERT INTO reservation (room_id, date) VALUES (?, ?)", id, newDate)
 	if err == nil {
 		return 1
@@ -151,15 +157,16 @@ func ListReservations() {
 		fmt.Println(err)
 		return
 	}
-	if rows.Next() {
-		for rows.Next() {
-			var id int
-			var roomId int
-			var date time.Time
-			_ = rows.Scan(&id, &roomId, &date)
-			fmt.Printf("%d : Salle %d réservée le %s", id, roomId, date)
-		}
-	} else {
+	var check int
+	for rows.Next() {
+		check += 1
+		var id int
+		var roomId int
+		var date time.Time
+		_ = rows.Scan(&id, &roomId, &date)
+		fmt.Printf("%d : Salle %d réservée le %s", id, roomId, date)
+	}
+	if check == 0 {
 		fmt.Println("Aucune réservation")
 	}
 	defer db.Close()
@@ -175,12 +182,15 @@ func ListReservationsReturn() []Reservation {
 		fmt.Println(err)
 		return reservations
 	}
-	if rows.Next() {
-		for rows.Next() {
-			var reserv Reservation
-			_ = rows.Scan(&reserv.Id, &reserv.roomId, &reserv.Date)
-			reservations = append(reservations, reserv)
+	for rows.Next() {
+		var reserv Reservation
+		err = rows.Scan(&reserv.Id, &reserv.roomId, &reserv.Date)
+		if err != nil {
+			fmt.Println("Erreur lors de la récupération des réservations")
+			fmt.Println(err)
+			return reservations
 		}
+		reservations = append(reservations, reserv)
 	}
 	return reservations
 }
