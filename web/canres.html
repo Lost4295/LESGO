@@ -28,7 +28,7 @@
             <label for="room">Merci d'entrer le numéro de la réservation que vous aimeriez annuler :</label>
             <select name="room" id="room" class="form-control">
                 {{range .}}
-                <option value="{{.RoomNumber}}">{{.RoomNumber}}</option>
+                <option value="{{.Id}}">{{.RoomName}}, le {{.Date}} </option>
                 {{end}}
             </select>
             <input type="submit" class="btn btn-success" value="Entrer">

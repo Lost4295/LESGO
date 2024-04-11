@@ -8,3 +8,4 @@
 /create_reservation?date=${date}&room=${room}
 /cancel_reservation?room=${room}
 /available_salles?date=${date}
+https://www.digitalocean.com/community/tutorials/how-to-make-an-http-server-in-go

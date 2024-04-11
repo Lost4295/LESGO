@@ -40,8 +40,9 @@ func ExportReservToCSV(fileName string) {
 	for _, r := range reserv {
 		record := []string{
 			strconv.Itoa(r.Id),
-			strconv.Itoa(r.roomId),
-			ConvertDatetimeToString(r.Date),
+			strconv.Itoa(r.RoomId),
+			// ConvertDatetimeToString(r.Date),
+			r.Date,
 		}
 		if err := writer.Write(record); err != nil {
 			fmt.Println("Erreur lors de l'écriture des données CSV:", err)

@@ -31,7 +31,7 @@ func availableRoomsHandler(w http.ResponseWriter, r *http.Request) {
 	hasDate := r.URL.Query().Has("date")
 	date := r.URL.Query().Get("date")
 	var data any
-	if hasDate && date != ""{
+	if hasDate && date != "" {
 		log.Printf("got POST request. date(%t)=%s\n",
 			hasDate, date)
 		data = res.AreFreeReturn(date)
@@ -43,8 +43,18 @@ func availableRoomsHandler(w http.ResponseWriter, r *http.Request) {
 
 func cancelReservationHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("executing cancelReservationHandler")
-	data := res.ListReservationsReturn()
-	renderTemplate(w, r, "canres", data)
+	hasroom := r.URL.Query().Has("room")
+	room := r.URL.Query().Get("room")
+	if hasroom && room != "" {
+		log.Printf("got POST request. room(%t)=%s\n",
+			hasroom, room)
+		i, _ := strconv.Atoi(room)
+		res.DeleteReservation(i)
+		http.Redirect(w, r, "/list_reservations", http.StatusFound)
+	} else {
+		data := res.ListReservationsReturn()
+		renderTemplate(w, r, "canres", data)
+	}
 }
 
 func createReservationHandler(w http.ResponseWriter, r *http.Request) {
