@@ -16,7 +16,7 @@ func ExportReservToJson(fileName string) {
 	if err != nil {
 		return
 	}
-	fmt.Println("Fichier d'export des réservations en Json crée")
+	fmt.Println("Fichier d'export des réservations en Json créé")
 }
 
 func ExportReservToCSV(fileName string) {

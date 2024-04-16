@@ -2,11 +2,16 @@ package db
 
 import (
 	"database/sql"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func Connect(user, password string) (*sql.DB, error) {
-	db, err := sql.Open("mysql", user+":"+password+"@tcp(localhost:3306)/mydatabase")
+func Connect(user string, password string) (*sql.DB, error) {
+
+	host := "localhost"
+	port := "3306"
+	dbname := "mydatabase"
+	db, err := sql.Open("mysql", user+":"+password+"@tcp("+host+":"+port+")/"+dbname)
 	if err != nil {
 		return db, err
 	}
@@ -31,4 +36,12 @@ func initDB(db *sql.DB) (*sql.DB, error) {
 		return db, err
 	}
 	return db, nil
+}
+
+func addRoom(db *sql.DB, name string, capacity int) error {
+	_, err := db.Exec("INSERT INTO room (name, capacity) VALUES (?, ?)", name, capacity)
+	if err != nil {
+		return err
+	}
+	return nil
 }

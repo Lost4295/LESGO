@@ -38,14 +38,15 @@ func ConvertDatetimeToString(datetime time.Time) string {
 
 func AreFree(value string) {
 	date := ConvertStringToDatetime(value)
+	date2 := ConvertDatetimeToString(date)
 	db, _ := db.Connect("user", "password")
 	defer db.Close()
-	rows, _ := db.Query("SELECT id FROM reservation WHERE date != ?", date)
+	rows, _ := db.Query("SELECT room_id FROM reservation WHERE date = ?", date2)
 
 	for rows.Next() {
 		var id int
 		_ = rows.Scan(&id)
-		rows, _ := db.Query("SELECT name, capacity FROM room WHERE id =", id)
+		rows, _ := db.Query("SELECT name, capacity FROM room WHERE id != ?", id)
 		rows.Next()
 		var name string
 		var capacity int
@@ -56,10 +57,11 @@ func AreFree(value string) {
 
 func AreFreeReturn(value string) []Room {
 	date := ConvertStringToDatetime(value)
+	date2 := ConvertDatetimeToString(date)
 	db, _ := db.Connect("user", "password")
 	defer db.Close()
 	var freeRooms []Room
-	rows, err := db.Query("SELECT id FROM reservation WHERE date != ?", date)
+	rows, err := db.Query("SELECT room_id FROM reservation WHERE date = ?", date2)
 	if err != nil {
 		fmt.Println("Erreur lors de la récupération des réservations")
 		fmt.Println(err)
@@ -68,12 +70,12 @@ func AreFreeReturn(value string) []Room {
 	for rows.Next() {
 		var id int
 		_ = rows.Scan(&id)
-		rows, _ := db.Query("SELECT name, capacity FROM room WHERE id = ?", id)
-		rows.Next()
-		var room Room
-		room.Id = id
-		_ = rows.Scan(&room.Name, &room.Capacity)
-		freeRooms = append(freeRooms, room)
+		rows2, _ := db.Query("SELECT id, name, capacity FROM room WHERE id != ?", id)
+		for rows2.Next(){
+			var room Room
+			_ = rows2.Scan(&room.Id, &room.Name, &room.Capacity)
+			freeRooms = append(freeRooms, room)
+		}
 	}
 	return freeRooms
 }

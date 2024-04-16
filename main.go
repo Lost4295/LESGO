@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -39,22 +38,14 @@ const (
 )
 
 func main() {
+	var verbose bool = false
+	if (len(os.Args) >= 2 && (os.Args[1] == "-v" || os.Args[1] == "--verbose")) {
+		verbose = true
+}
 
-	if len(os.Args) == 1 {
-		fmt.Printf("%s[ERROR]%s\n\n%sNo option given.\nPlease select an option on what to launch : the CLI or the WEB app.%s\nUsage of the program : \n%sgo run main.go [CLI|WEB]\n\n%s", "1", END, ROUGE, END, GREEN, END)
-		os.Exit(1)
-	} else if len(os.Args) > 2 {
-		fmt.Printf("%s[ERROR]%s\n\n%sToo much arguments !%s\nUsage of the program : \n%sgo run main.go [CLI|WEB]\n\n%s", "1", END, ROUGE, END, GREEN, END)
-		os.Exit(1)
-	}
-	if strings.ToUpper(os.Args[1]) != "WEB" && strings.ToUpper(os.Args[1]) != "CLI" {
-		fmt.Printf("%s[ERROR]%s\n\n%sInvalid option.\nPlease select an option on what to launch : the CLI or the WEB app.%s\nUsage of the program : \n%sgo run main.go [CLI|WEB]\n\n%s", "1", END, ROUGE, END, GREEN, END)
-		os.Exit(1)
-	}
-	if strings.ToUpper(os.Args[1]) == "WEB" {
-		web.Main()
-	}
-	db.CreateTest()
+	os.Setenv("verbose", strconv.FormatBool(verbose))
+	web.Main()
+	db.ConnectToDatabase()
 	// fmt.Println(time.DateTime)
 	scanner := bufio.NewScanner(os.Stdin)
 	var number int
