@@ -82,6 +82,7 @@ func main() {
 		case 2:
 			// Année
 			var year string
+			var intYear int
 			good := false
 			for !good {
 				fmt.Println("Entrez l'année de réservation (yyyy):")
@@ -100,6 +101,7 @@ func main() {
 
 			//Mois
 			var month string
+			var intMonth int
 			good = false
 			for !good {
 				fmt.Println("Entrez le mois de réservation (mm):")
@@ -131,6 +133,34 @@ func main() {
 				if err != nil {
 					fmt.Println("Erreur de conversion: ", err)
 					os.Exit(1)
+				}
+				switch intMonth {
+				case 1, 3, 5, 7, 8, 10, 12:
+					if intDay >= 1 && intDay <= 31 {
+						good = true
+					} else {
+						fmt.Println("Le jour doit être compris entre 1 et 31")
+					}
+				case 4, 6, 9, 11:
+					if intDay >= 1 && intDay <= 30 {
+						good = true
+					} else {
+						fmt.Println("Le jour doit être compris entre 1 et 30")
+					}
+				case 2:
+					if intYear%4 == 0 && (intYear%100 != 0 || intYear%400 == 0) {
+						if intDay >= 1 && intDay <= 29 {
+							good = true
+						} else {
+							fmt.Println("Le jour doit être compris entre 1 et 29")
+						}
+					} else {
+						if intDay >= 1 && intDay <= 28 {
+							good = true
+						} else {
+							fmt.Println("Le jour doit être compris entre 1 et 28")
+						}
+					}
 				}
 				if intDay >= 1 && intDay <= 31 {
 					good = true
