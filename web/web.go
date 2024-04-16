@@ -2,12 +2,12 @@ package web
 
 import (
 	res "LESGO/reservations"
+	"context"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
-	"context"
 )
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
@@ -48,7 +48,7 @@ func availableRoomsHandler(w http.ResponseWriter, r *http.Request) {
 			hasDate, date)
 		data = res.AreFreeReturn(date)
 	} else {
-		data = nil
+		data = res.ListRoomsReturn()
 	}
 	renderTemplate(w, r, "avrooms", data)
 }
@@ -151,7 +151,7 @@ func Main() {
 	http.HandleFunc("/byebye", byeHandler)
 	V := os.Getenv("verbose")
 	if V == "true" {
-		log. Println("Listening on :8000")
+		log.Println("Listening on :9000")
 	}
 
 	go func() {

@@ -67,15 +67,20 @@ func AreFreeReturn(value string) []Room {
 		fmt.Println(err)
 		return freeRooms
 	}
-	for rows.Next() {
-		var id int
-		_ = rows.Scan(&id)
-		rows2, _ := db.Query("SELECT id, name, capacity FROM room WHERE id != ?", id)
-		for rows2.Next(){
-			var room Room
-			_ = rows2.Scan(&room.Id, &room.Name, &room.Capacity)
-			freeRooms = append(freeRooms, room)
+	if rows.Next() {
+		for rows.Next() {
+			var id int
+			_ = rows.Scan(&id)
+
+			rows2, _ := db.Query("SELECT id, name, capacity FROM room WHERE id != ?", id)
+			for rows2.Next() {
+				var room Room
+				_ = rows2.Scan(&room.Id, &room.Name, &room.Capacity)
+				freeRooms = append(freeRooms, room)
+			}
 		}
+	} else {
+		freeRooms = ListRoomsReturn()
 	}
 	return freeRooms
 }
@@ -171,7 +176,7 @@ func ListReservations() {
 		rows2.Next()
 		var roomName string
 		_ = rows2.Scan(&roomName)
-		fmt.Printf("%d : Salle %d (nom : %s) réservée le %s", id, roomId,roomName,  date)
+		fmt.Printf("%d : Salle %d (nom : %s) réservée le %s", id, roomId, roomName, date)
 	}
 	if check == 0 {
 		fmt.Println("Aucune réservation")
