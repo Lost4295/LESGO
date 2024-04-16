@@ -80,10 +80,115 @@ func main() {
 			fmt.Println("Liste des salles :")
 			res.ListRooms()
 		case 2:
-			fmt.Println("Entrez la date de la réservation sous le format yyyy-mm-dd hh:min :")
-			scanner.Scan()
+			// Année
+			var year string
+			good := false
+			for !good {
+				fmt.Println("Entrez l'année de réservation (yyyy):")
+				scanner.Scan()
+				year = scanner.Text()
+				if len(year) == 4 {
+					if year[0] == '2' && year[1] == '0' {
+						good = true
+					} else {
+						fmt.Println("L'année doit commencer par 20")
+					}
+				} else {
+					fmt.Println("L'année doit être au format yyyy")
+				}
+			}
+
+			//Mois
+			var month string
+			good = false
+			for !good {
+				fmt.Println("Entrez le mois de réservation (mm):")
+				scanner.Scan()
+				month = scanner.Text()
+				intMonth, err := strconv.Atoi(month)
+				if err != nil {
+					fmt.Println("Erreur de conversion: ", err)
+					os.Exit(1)
+				}
+				if intMonth >= 01 && intMonth <= 12 {
+					good = true
+					if len(month) == 1 {
+						month = "0" + month
+					}
+				} else {
+					fmt.Println("Le mois doit être compris entre 1 et 12")
+				}
+			}
+
+			//Jour
+			var day string
+			good = false
+			for !good {
+				fmt.Println("Entrez le jour de réservation (dd):")
+				scanner.Scan()
+				day = scanner.Text()
+				intDay, err := strconv.Atoi(day)
+				if err != nil {
+					fmt.Println("Erreur de conversion: ", err)
+					os.Exit(1)
+				}
+				if intDay >= 1 && intDay <= 31 {
+					good = true
+					if len(day) == 1 {
+						day = "0" + day
+					}
+				} else {
+					fmt.Println("Le jour doit être compris entre 1 et 31")
+				}
+			}
+
+			//Heure
+			var hour string
+			good = false
+			for !good {
+				fmt.Println("Entrez l'heure de réservation (hh):")
+				scanner.Scan()
+				hour = scanner.Text()
+				intHour, err := strconv.Atoi(hour)
+				if err != nil {
+					fmt.Println("Erreur de conversion: ", err)
+					os.Exit(1)
+				}
+				if intHour >= 0 && intHour <= 23 {
+					good = true
+					if len(hour) == 1 {
+						hour = "0" + hour
+					}
+				} else {
+					fmt.Println("L'heure doit être comprise entre 0 et 23")
+				}
+			}
+
+			//Minute
+			var minute string
+			good = false
+			for !good {
+				fmt.Println("Entrez les minutes de réservation (mm):")
+				scanner.Scan()
+				minute = scanner.Text()
+				intMinute, err := strconv.Atoi(minute)
+				if err != nil {
+					fmt.Println("Erreur de conversion: ", err)
+					os.Exit(1)
+				}
+				if intMinute >= 0 && intMinute <= 59 {
+					good = true
+					if len(minute) == 1 {
+						minute = "0" + minute
+					}
+				} else {
+					fmt.Println("Les minutes doivent être comprises entre 0 et 59")
+				}
+			}
+
 			fmt.Println("Liste des salles disponibles :")
-			res.AreFree(scanner.Text())
+			//Format yyyy-mm-dd hh:min
+			res.AreFree(year + "-" + month + "-" + day + " " + hour + ":" + minute)
 		case 3:
 			fmt.Println("Créer une réservation")
 			fmt.Print("Entrez le numéro de la salle : ")
