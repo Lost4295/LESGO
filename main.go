@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -25,7 +26,8 @@ func showMenu() {
 	fmt.Println("3. Créer une réservation")
 	fmt.Println("4. Annuler une réservation")
 	fmt.Println("5. Visualiser les réservations")
-	fmt.Println("6. Quitter")
+	fmt.Println("6. Exporter les réservations")
+	fmt.Println("7. Quitter")
 	fmt.Println()
 }
 
@@ -67,7 +69,7 @@ func main() {
 		}
 		if number > 6 || number < 1 {
 			showMenu()
-			fmt.Print("Veuillez entrer un nombre entre 1 et 6 : ")
+			fmt.Print("Veuillez entrer un nombre entre 1 et 7 : ")
 			continue
 		}
 
@@ -102,6 +104,20 @@ func main() {
 			fmt.Println("Visualiser les réservations")
 			res.ListReservations()
 		case 6:
+			fmt.Println("Exporter les réservations")
+			fmt.Print("Entrez le format de l'export (json/csv) : ")
+			scanner.Scan()
+			input := scanner.Text()
+			inputLower := strings.ToLower(input)
+
+			if inputLower == "json" {
+				res.ExportReservToJson("reservations")
+			} else if inputLower == "csv" {
+				res.ExportReservToCSV("reservations")
+			} else {
+				fmt.Println("Erreur : Format incorrect")
+			}
+		case 7:
 			fmt.Println("Quitter")
 			os.Exit(0)
 		}
