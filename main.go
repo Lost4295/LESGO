@@ -27,7 +27,8 @@ func showMenu() {
 	fmt.Println("4. Annuler une réservation")
 	fmt.Println("5. Visualiser les réservations")
 	fmt.Println("6. Exporter les réservations")
-	fmt.Println("7. Quitter")
+	fmt.Println("7. Importer des réservations")
+	fmt.Println("8. Quitter")
 	fmt.Println()
 }
 
@@ -67,9 +68,9 @@ func main() {
 			fmt.Print("Veuillez entrer un nombre valide : ")
 			continue
 		}
-		if number > 6 || number < 1 {
+		if number > 8 || number < 1 {
 			showMenu()
-			fmt.Print("Veuillez entrer un nombre entre 1 et 7 : ")
+			fmt.Print("Veuillez entrer un nombre entre 1 et 8 : ")
 			continue
 		}
 
@@ -118,6 +119,20 @@ func main() {
 				fmt.Println("Erreur : Format incorrect")
 			}
 		case 7:
+			fmt.Println("Importer des réservations")
+			fmt.Print("Entrez le nom du fichier : ")
+			scanner.Scan()
+			input := scanner.Text()
+			parts := strings.Split(input, ".")
+
+			if parts[len(parts)-1] == "json" {
+				res.ImportReservFromJson(input)
+			} else if parts[len(parts)-1] == "csv" {
+				res.ImportReservFromCSV(input)
+			} else {
+				fmt.Println("Erreur : Format de fichier incorrect")
+			}
+		case 8:
 			fmt.Println("Quitter")
 			os.Exit(0)
 		}

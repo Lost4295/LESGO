@@ -176,7 +176,7 @@ func ListReservations() {
 		rows2.Next()
 		var roomName string
 		_ = rows2.Scan(&roomName)
-		fmt.Printf("%d : Salle %d (nom : %s) réservée le %s", id, roomId, roomName, date)
+		fmt.Printf("%d : Salle %d (nom : %s) réservée le %s\n", id, roomId, roomName, date)
 	}
 	if check == 0 {
 		fmt.Println("Aucune réservation")

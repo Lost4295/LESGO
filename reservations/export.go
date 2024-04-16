@@ -31,7 +31,7 @@ func ExportReservToCSV(fileName string) {
 	writer := csv.NewWriter(file)
 	defer writer.Flush()
 
-	header := []string{"Id", "RoomId", "Date"}
+	header := []string{"Id", "RoomId", "Date", "RoomName"}
 	if err := writer.Write(header); err != nil {
 		fmt.Println("Erreur lors de l'écriture de l'en-tête CSV:", err)
 		return
@@ -43,6 +43,7 @@ func ExportReservToCSV(fileName string) {
 			strconv.Itoa(r.RoomId),
 			// ConvertDatetimeToString(r.Date),
 			r.Date,
+			r.RoomName,
 		}
 		if err := writer.Write(record); err != nil {
 			fmt.Println("Erreur lors de l'écriture des données CSV:", err)
