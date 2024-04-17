@@ -58,16 +58,16 @@ func main() {
 	if magenta {
 		fmt.Print(MAGENTA)
 	}
-	web.Main()
-	db.ConnectToDatabase()
+	// web.Main()
+	// db.ConnectToDatabase()
 	// fmt.Println(time.DateTime)
 	scanner := bufio.NewScanner(os.Stdin)
 	var number int
 	var err error
 
 	for {
-		fmt.Printf("%sBienvenue dans le Service de Réservation en Ligne%s", BLUE, END)
-		fmt.Println("%s-------------------------------------------------%s", BLANC, END)
+		fmt.Printf("Bienvenue dans le Service de Réservation en Ligne")
+		fmt.Println("-------------------------------------------------")
 		showMenu()
 		fmt.Print("Sélectionnez une option : ")
 
