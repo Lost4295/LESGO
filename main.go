@@ -67,7 +67,7 @@ func main() {
 		fmt.Printf("%sBienvenue dans le Service de Réservation en Ligne%s", BLUE, END)
 		fmt.Printf("\n%s-------------------------------------------------%s", WHITE, END)
 		showMenu()
-		fmt.Print("%sSélectionnez une option : %s", GREEN, END)
+		fmt.Printf("%sSélectionnez une option : %s", GREEN, END)
 
 		scanner.Scan()
 		number, err = strconv.Atoi(scanner.Text())
@@ -85,7 +85,7 @@ func main() {
 		fmt.Println("Option choisie :", number)
 		switch number {
 		case 1:
-			fmt.Printf("\n%sListe des salles :%s", BLUE, END)
+			fmt.Printf("\n%sListe des salles :%s\n", BLUE, END)
 			res.ListRooms()
 		case 2:
 			// Année
@@ -224,7 +224,7 @@ func main() {
 				}
 			}
 
-			fmt.Printf("\n%sListe des salles disponibles :%s", BLUE, END)
+			fmt.Printf("\n%sListe des salles disponibles :%s\n", BLUE, END)
 			res.AreFree(year + "-" + month + "-" + day + " " + hour + ":" + minute)
 		case 3:
 			fmt.Printf("\n%sCréer une réservation%s", BLUE, END)
@@ -396,7 +396,7 @@ func main() {
 			}
 		case 7:
 			fmt.Printf("\n%sImporter des réservations%s", BLUE, END)
-			fmt.Print("%sEntrez le nom du fichier : %s", GREEN, END)
+			fmt.Printf("\n%sEntrez le nom du fichier : %s", GREEN, END)
 			scanner.Scan()
 			input := scanner.Text()
 			parts := strings.Split(input, ".")
