@@ -33,11 +33,12 @@ func showMenu() {
 }
 
 const (
-	WHITEONRED = ""
+	WHITEONRED = "\033[37;41m"
 	END        = "\033[0m"
 	ROUGE      = "\033[31;01;51m"
 	GREEN      = "\033[32;01m"
 	BLANC      = "\033[37;07m"
+	BLUE	   = "\033[34;01m"
 )
 
 func main() {
@@ -56,8 +57,8 @@ func main() {
 
 	for {
 
-		fmt.Println("Bienvenue dans le Service de Réservation en Ligne")
-		fmt.Println("-------------------------------------------------")
+		fmt.Printf("%sBienvenue dans le Service de Réservation en Ligne%s", BLUE, END)
+		fmt.Println("%s-------------------------------------------------%s", BLANC, END)
 		showMenu()
 		fmt.Print("Sélectionnez une option : ")
 

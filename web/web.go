@@ -10,6 +10,11 @@ import (
 	"strconv"
 )
 
+const (
+	END   = "\033[0m"
+	ROUGE = "\033[31;01;51m"
+)
+
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	V := os.Getenv("verbose")
 	if V == "true" {
@@ -158,7 +163,7 @@ func Main() {
 		httpError := srv.ListenAndServe()
 		if httpError != nil {
 			if V == "true" {
-				log.Println("While serving HTTP: ", httpError)
+				log.Println(ROUGE, "While serving HTTP: ", END, httpError)
 			}
 		}
 	}()
