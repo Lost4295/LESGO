@@ -1,7 +1,9 @@
 package main
 
 import (
+	"LESGO/db"
 	res "LESGO/reservations"
+	// "LESGO/web"
 	"bufio"
 	"fmt"
 	"os"
@@ -34,16 +36,16 @@ func showMenu() {
 const (
 	WHITEONRED = "\033[37;41m"
 	END        = "\033[0m"
-	RED        = "\033[31;01;51m"
+	ROUGE      = "\033[31;01;51m"
 	GREEN      = "\033[32;01m"
-	WHITE      = "\033[37;07m"
-	BLUE       = "\033[34;01m"
-	MAGENTA    = "\033[35;01m"
+	BLANC      = "\033[37;07m"
+	BLUE	   = "\033[34;01m"
+	MAGENTA   = "\033[35;01m"
 )
 
 func main() {
 	var verbose, magenta bool = false, false
-	if slices.Contains(os.Args, "-v") || slices.Contains(os.Args, "--verbose") {
+	if slices.Contains(os.Args,"-v") || slices.Contains(os.Args,"--verbose") {
 		verbose = true
 	}
 
@@ -57,35 +59,35 @@ func main() {
 		fmt.Print(MAGENTA)
 	}
 	// web.Main()
-	// db.ConnectToDatabase()
+	db.ConnectToDatabase()
 	// fmt.Println(time.DateTime)
 	scanner := bufio.NewScanner(os.Stdin)
 	var number int
 	var err error
 
 	for {
-		fmt.Printf("%sBienvenue dans le Service de Réservation en Ligne%s", BLUE, END)
-		fmt.Printf("\n%s-------------------------------------------------%s", WHITE, END)
+		fmt.Println("Bienvenue dans le Service de Réservation en Ligne")
+		fmt.Println("-------------------------------------------------")
 		showMenu()
-		fmt.Printf("%sSélectionnez une option : %s", GREEN, END)
+		fmt.Print("Sélectionnez une option : ")
 
 		scanner.Scan()
 		number, err = strconv.Atoi(scanner.Text())
 		if err != nil {
 			showMenu()
-			fmt.Print("%sVeuillez entrer un nombre valide : %s", RED, END)
+			fmt.Print("Veuillez entrer un nombre valide : ")
 			continue
 		}
 		if number > 8 || number < 1 {
 			showMenu()
-			fmt.Print("%sVeuillez entrer un nombre entre 1 et 8 : %s", RED, END)
+			fmt.Print("Veuillez entrer un nombre entre 1 et 8 : ")
 			continue
 		}
 
 		fmt.Println("Option choisie :", number)
 		switch number {
 		case 1:
-			fmt.Printf("\n%sListe des salles :%s\n", BLUE, END)
+			fmt.Println("Liste des salles :")
 			res.ListRooms()
 		case 2:
 			// Année
@@ -93,17 +95,17 @@ func main() {
 			var intYear int
 			good := false
 			for !good {
-				fmt.Printf("\n%sEntrez l'année de réservation (yyyy):%s", GREEN, END)
+				fmt.Println("Entrez l'année de réservation (yyyy):")
 				scanner.Scan()
 				year = scanner.Text()
 				if len(year) == 4 {
 					if year[0] == '2' && year[1] == '0' {
 						good = true
 					} else {
-						fmt.Printf("\n%sL'année doit commencer par 20%s", RED, END)
+						fmt.Println("L'année doit commencer par 20")
 					}
 				} else {
-					fmt.Printf("\n%sL'année doit être au format yyyy%s", RED, END)
+					fmt.Println("L'année doit être au format yyyy")
 				}
 			}
 
@@ -112,7 +114,7 @@ func main() {
 			var intMonth int
 			good = false
 			for !good {
-				fmt.Printf("\n%sEntrez le mois de réservation (mm):%s", GREEN, END)
+				fmt.Println("Entrez le mois de réservation (mm):")
 				scanner.Scan()
 				month = scanner.Text()
 				intMonth, err := strconv.Atoi(month)
@@ -126,7 +128,7 @@ func main() {
 						month = "0" + month
 					}
 				} else {
-					fmt.Printf("\n%sLe mois doit être compris entre 1 et 12%s", RED, END)
+					fmt.Println("Le mois doit être compris entre 1 et 12")
 				}
 			}
 
@@ -134,7 +136,7 @@ func main() {
 			var day string
 			good = false
 			for !good {
-				fmt.Printf("\n%sEntrez le jour de réservation (dd):%s", GREEN, END)
+				fmt.Println("Entrez le jour de réservation (dd):")
 				scanner.Scan()
 				day = scanner.Text()
 				intDay, err := strconv.Atoi(day)
@@ -147,26 +149,26 @@ func main() {
 					if intDay >= 1 && intDay <= 31 {
 						good = true
 					} else {
-						fmt.Printf("\n%sLe jour doit être compris entre 1 et 31%s", RED, END)
+						fmt.Println("Le jour doit être compris entre 1 et 31")
 					}
 				case 4, 6, 9, 11:
 					if intDay >= 1 && intDay <= 30 {
 						good = true
 					} else {
-						fmt.Printf("\n%sLe jour doit être compris entre 1 et 30%s", RED, END)
+						fmt.Println("Le jour doit être compris entre 1 et 30")
 					}
 				case 2:
 					if intYear%4 == 0 && (intYear%100 != 0 || intYear%400 == 0) {
 						if intDay >= 1 && intDay <= 29 {
 							good = true
 						} else {
-							fmt.Printf("\n%sLe jour doit être compris entre 1 et 29%s", RED, END)
+							fmt.Println("Le jour doit être compris entre 1 et 29")
 						}
 					} else {
 						if intDay >= 1 && intDay <= 28 {
 							good = true
 						} else {
-							fmt.Printf("\n%sLe jour doit être compris entre 1 et 28%s", RED, END)
+							fmt.Println("Le jour doit être compris entre 1 et 28")
 						}
 					}
 				}
@@ -176,7 +178,7 @@ func main() {
 						day = "0" + day
 					}
 				} else {
-					fmt.Printf("\n%sLe jour doit être compris entre 1 et 31%s", RED, END)
+					fmt.Println("Le jour doit être compris entre 1 et 31")
 				}
 			}
 
@@ -184,7 +186,7 @@ func main() {
 			var hour string
 			good = false
 			for !good {
-				fmt.Printf("\n%sEntrez l'heure de réservation (hh):%s", GREEN, END)
+				fmt.Println("Entrez l'heure de réservation (hh):")
 				scanner.Scan()
 				hour = scanner.Text()
 				intHour, err := strconv.Atoi(hour)
@@ -198,7 +200,7 @@ func main() {
 						hour = "0" + hour
 					}
 				} else {
-					fmt.Printf("\n%sL'heure doit être comprise entre 0 et 23%s", RED, END)
+					fmt.Println("L'heure doit être comprise entre 0 et 23")
 				}
 			}
 
@@ -206,7 +208,7 @@ func main() {
 			var minute string
 			good = false
 			for !good {
-				fmt.Printf("\n%sEntrez les minutes de réservation (mm):%s", GREEN, END)
+				fmt.Println("Entrez les minutes de réservation (mm):")
 				scanner.Scan()
 				minute = scanner.Text()
 				intMinute, err := strconv.Atoi(minute)
@@ -220,35 +222,36 @@ func main() {
 						minute = "0" + minute
 					}
 				} else {
-					fmt.Printf("\n%sLes minutes doivent être comprises entre 0 et 59%s", RED, END)
+					fmt.Println("Les minutes doivent être comprises entre 0 et 59")
 				}
 			}
 
-			fmt.Printf("\n%sListe des salles disponibles :%s\n", BLUE, END)
+			fmt.Println("Liste des salles disponibles :")
 			res.AreFree(year + "-" + month + "-" + day + " " + hour + ":" + minute)
 		case 3:
-			fmt.Printf("\n%sCréer une réservation%s\n", BLUE, END)
-			fmt.Print("%sEntrez le numéro de la salle : %s", GREEN, END)
+			fmt.Println("Créer une réservation")
+			fmt.Print("Entrez le numéro de la salle : ")
 			scanner.Scan()
 			salle, err := strconv.Atoi(scanner.Text())
 			handleErr(err)
+			fmt.Print("Entrez la date de la réservation : ")
 
 			// Année
 			var year string
 			var intYear int
 			good := false
 			for !good {
-				fmt.Printf("\n%sEntrez l'année de réservation (yyyy):%s", GREEN, END)
+				fmt.Println("Entrez l'année de réservation (yyyy):")
 				scanner.Scan()
 				year = scanner.Text()
 				if len(year) == 4 {
 					if year[0] == '2' && year[1] == '0' {
 						good = true
 					} else {
-						fmt.Printf("\n%sL'année doit commencer par 20%s", RED, END)
+						fmt.Println("L'année doit commencer par 20")
 					}
 				} else {
-					fmt.Printf("\n%sL'année doit être au format yyyy%s", RED, END)
+					fmt.Println("L'année doit être au format yyyy")
 				}
 			}
 
@@ -257,7 +260,7 @@ func main() {
 			var intMonth int
 			good = false
 			for !good {
-				fmt.Printf("\n%sEntrez le mois de réservation (mm):%s", GREEN, END)
+				fmt.Println("Entrez le mois de réservation (mm):")
 				scanner.Scan()
 				month = scanner.Text()
 				intMonth, err := strconv.Atoi(month)
@@ -271,7 +274,7 @@ func main() {
 						month = "0" + month
 					}
 				} else {
-					fmt.Printf("\n%sLe mois doit être compris entre 1 et 12%s", RED, END)
+					fmt.Println("Le mois doit être compris entre 1 et 12")
 				}
 			}
 
@@ -279,7 +282,7 @@ func main() {
 			var day string
 			good = false
 			for !good {
-				fmt.Printf("\n%sEntrez le jour de réservation (dd):%s", GREEN, END)
+				fmt.Println("Entrez le jour de réservation (dd):")
 				scanner.Scan()
 				day = scanner.Text()
 				intDay, err := strconv.Atoi(day)
@@ -292,26 +295,26 @@ func main() {
 					if intDay >= 1 && intDay <= 31 {
 						good = true
 					} else {
-						fmt.Printf("\n%sLe jour doit être compris entre 1 et 31%s", RED, END)
+						fmt.Println("Le jour doit être compris entre 1 et 31")
 					}
 				case 4, 6, 9, 11:
 					if intDay >= 1 && intDay <= 30 {
 						good = true
 					} else {
-						fmt.Printf("\n%sLe jour doit être compris entre 1 et 30%s", RED, END)
+						fmt.Println("Le jour doit être compris entre 1 et 30")
 					}
 				case 2:
 					if intYear%4 == 0 && (intYear%100 != 0 || intYear%400 == 0) {
 						if intDay >= 1 && intDay <= 29 {
 							good = true
 						} else {
-							fmt.Printf("\n%sLe jour doit être compris entre 1 et 29%s", RED, END)
+							fmt.Println("Le jour doit être compris entre 1 et 29")
 						}
 					} else {
 						if intDay >= 1 && intDay <= 28 {
 							good = true
 						} else {
-							fmt.Printf("\n%sLe jour doit être compris entre 1 et 28%s", RED, END)
+							fmt.Println("Le jour doit être compris entre 1 et 28")
 						}
 					}
 				}
@@ -321,7 +324,7 @@ func main() {
 						day = "0" + day
 					}
 				} else {
-					fmt.Println("Le jour doit être compris entre 1 et 31%s", RED, END)
+					fmt.Println("Le jour doit être compris entre 1 et 31")
 				}
 			}
 
@@ -329,7 +332,7 @@ func main() {
 			var hour string
 			good = false
 			for !good {
-				fmt.Printf("\n%s%sEntrez l'heure de réservation (hh):%s", GREEN, END)
+				fmt.Println("Entrez l'heure de réservation (hh):")
 				scanner.Scan()
 				hour = scanner.Text()
 				intHour, err := strconv.Atoi(hour)
@@ -343,7 +346,7 @@ func main() {
 						hour = "0" + hour
 					}
 				} else {
-					fmt.Printf("\n%sL'heure doit être comprise entre 0 et 23%s", RED, END)
+					fmt.Println("L'heure doit être comprise entre 0 et 23")
 				}
 			}
 
@@ -351,7 +354,7 @@ func main() {
 			var minute string
 			good = false
 			for !good {
-				fmt.Printf("\n%sEntrez les minutes de réservation (mm):%s", GREEN, END)
+				fmt.Println("Entrez les minutes de réservation (mm):")
 				scanner.Scan()
 				minute = scanner.Text()
 				intMinute, err := strconv.Atoi(minute)
@@ -365,24 +368,24 @@ func main() {
 						minute = "0" + minute
 					}
 				} else {
-					fmt.Printf("\n%sLes minutes doivent être comprises entre 0 et 59%s", RED, END)
+					fmt.Println("Les minutes doivent être comprises entre 0 et 59")
 				}
 			}
 
 			res.CreateReservation(salle, year+"-"+month+"-"+day+" "+hour+":"+minute)
 		case 4:
-			fmt.Printf("\n%sAnnuler une réservation%s\n", BLUE, END)
-			fmt.Print("%sEntrez le numéro de la réservation : %s", GREEN, END)
+			fmt.Println("Annuler une réservation")
+			fmt.Print("Entrez le numéro de la réservation : ")
 			scanner.Scan()
 			id, err := strconv.Atoi(scanner.Text())
 			handleErr(err)
 			res.DeleteReservation(id)
 		case 5:
-			fmt.Printf("\n%sVisualiser les réservations%s\n", BLUE, END)
+			fmt.Println("Visualiser les réservations")
 			res.ListReservations()
 		case 6:
-			fmt.Printf("\n%sExporter les réservations%s\n", BLUE, END)
-			fmt.Print("%sEntrez le format de l'export (json/csv) : %s", GREEN, END)
+			fmt.Println("Exporter les réservations")
+			fmt.Print("Entrez le format de l'export (json/csv) : ")
 			scanner.Scan()
 			input := scanner.Text()
 			inputLower := strings.ToLower(input)
@@ -392,11 +395,11 @@ func main() {
 			} else if inputLower == "csv" {
 				res.ExportReservToCSV("reservations")
 			} else {
-				fmt.Printf("\n%sErreur : Format incorrect%s", RED, END)
+				fmt.Println("Erreur : Format incorrect")
 			}
 		case 7:
-			fmt.Printf("\n%sImporter des réservations%s\n", BLUE, END)
-			fmt.Printf("%sEntrez le nom du fichier : %s", GREEN, END)
+			fmt.Println("Importer des réservations")
+			fmt.Print("Entrez le nom du fichier : ")
 			scanner.Scan()
 			input := scanner.Text()
 			parts := strings.Split(input, ".")
@@ -406,13 +409,13 @@ func main() {
 			} else if parts[len(parts)-1] == "csv" {
 				res.ImportReservFromCSV(input)
 			} else {
-				fmt.Printf("\n%sErreur : Format de fichier incorrect%s", RED, END)
+				fmt.Println("Erreur : Format de fichier incorrect")
 			}
 		case 8:
-			fmt.Printf("\n%sQuitter%s", BLUE, END)
+			fmt.Println("Quitter")
 			os.Exit(0)
 		}
-		fmt.Printf("\n%sAppuyer sur n'importe quelle touche pour revenir au menu principal%s", GREEN, END)
+		fmt.Println("Appuyer sur n'importe quelle touche pour revenir au menu principal")
 		scanner.Scan()
 	}
 }
