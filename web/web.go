@@ -3,6 +3,7 @@ package web
 import (
 	res "LESGO/reservations"
 	"context"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -10,10 +11,16 @@ import (
 	"strconv"
 )
 
+var templates = template.Must(template.ParseFiles(
+	"web/pages/home.html", "web/pages/avrooms.html",
+	"web/pages/byebye.html", "web/pages/canres.html",
+	"web/pages/createres.html", "web/pages/rooms.html",
+	"web/pages/listres.html", "web/pages/notfound.html"))
+
 const (
 	END   = "\033[0m"
 	ROUGE = "\033[31;01;51m"
-	LR	= "/list_reservations"
+	LR    = "/list_reservations"
 )
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
@@ -37,7 +44,7 @@ func roomsHandler(w http.ResponseWriter, r *http.Request) {
 	if V == "true" {
 		log.Println("executing roomsHandler")
 	}
-	data := res.ListRoomsReturn()
+	data := res.ListRooms()
 	renderTemplate(w, "rooms", data)
 }
 
@@ -48,14 +55,23 @@ func availableRoomsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	hasDate := r.URL.Query().Has("date")
 	date := r.URL.Query().Get("date")
-	var data any
-	if hasDate && date != "" {
-		log.Printf("got POST request. date(%t)=%s\n",
-			hasDate, date)
-		data = res.AreFreeReturn(date)
+	hasRoom := r.URL.Query().Has("room")
+	room := r.URL.Query().Get("room")
+	var data = []any{}
+	data = append(data, res.ListRooms())
+	if (hasDate && date != "") || (hasRoom && room != "") {
+		log.Printf("got POST request. date(%t)=%s, room(%t)=%s\n",
+			hasDate, date, hasRoom, room)
+		if hasDate {
+			data = append(data, res.ListReservationsByDate(date))
+		} else {
+			i, _ := strconv.Atoi(room)
+			data = append(data, res.ListReservationsByRoom(i))
+		}
 	} else {
-		data = res.ListRoomsReturn()
+		data = append(data, res.ListRooms())
 	}
+	fmt.Println(data)
 	renderTemplate(w, "avrooms", data)
 }
 
@@ -73,7 +89,7 @@ func cancelReservationHandler(w http.ResponseWriter, r *http.Request) {
 		res.DeleteReservation(i)
 		http.Redirect(w, r, LR, http.StatusFound)
 	} else {
-		data := res.ListReservationsReturn()
+		data := res.ListReservations()
 		renderTemplate(w, "canres", data)
 	}
 }
@@ -97,7 +113,7 @@ func createReservationHandler(w http.ResponseWriter, r *http.Request) {
 		res.CreateReservation(e, date)
 		http.Redirect(w, r, LR, http.StatusFound)
 	} else {
-		data := res.ListRoomsReturn()
+		data := res.ListRooms()
 		renderTemplate(w, "createres", data)
 	}
 }
@@ -107,7 +123,7 @@ func listReservationsHandler(w http.ResponseWriter, r *http.Request) {
 	if V == "true" {
 		log.Println("executing listReservationsHandler")
 	}
-	data := res.ListReservationsReturn()
+	data := res.ListReservations()
 	renderTemplate(w, "listres", data)
 }
 
@@ -118,12 +134,6 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	renderTemplate(w, "notfound", nil)
 }
-
-var templates = template.Must(template.ParseFiles(
-	"web/home.html", "web/avrooms.html",
-	"web/byebye.html", "web/canres.html",
-	"web/createres.html", "web/rooms.html",
-	"web/listres.html", "web/notfound.html"))
 
 func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
 	// str := "web/" + tmpl + ".html"
@@ -141,7 +151,7 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
 func Main() {
 	var handler http.Handler
 	srv := &http.Server{Addr: ":9000", Handler: handler}
-	http.HandleFunc("/", homeHandler)
+	// http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/home", homeHandler)
 	http.HandleFunc("/die", func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Bye bye", http.StatusNotFound)

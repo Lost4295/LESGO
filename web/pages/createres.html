@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <title>Créer une réservation</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    />
+    <style>
+      .button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #4caf50;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        font-size: 16px;
+        border-radius: 5px;
+        margin: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <h1>Créer une réservation</h1>
+          <div>
+            <form>
+              <label for="room"
+                >Merci d'entrer le numéro de la salle que vous aimeriez réserver
+                :</label
+              >
+              <select name="room" class="form-control" id="room">
+                {{range .}}
+                <option value="{{.Id}}">{{.Name}} : </option>
+                {{end}}
+              </select>
+              <label for="date"
+                >Merci d'entrer la date que vous aimeriez réserver pour la salle :</label>
+              <input type="datetime-local" class="form-control" id="date" name="date" />
+              <input class="btn btn-success" type="submit" value="Réserver" />
+            </form>
+            <div>
+              <a class="btn btn-primary" href="/home"> Retour</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      document.querySelector("form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const date = document.querySelector("#date").value;
+        const room = document.querySelector("#room").value;
+        window.location.href = `/create_reservation?date=${date}&room=${room}`;
+      });
+    </script>
+  </body>
+</html>

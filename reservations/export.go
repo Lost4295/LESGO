@@ -9,7 +9,7 @@ import (
 )
 
 func ExportReservToJson(fileName string) {
-	reserv := ListReservationsReturn()
+	reserv := ListReservations()
 	jsonData, _ := json.Marshal(reserv)
 
 	err := os.WriteFile(fileName+".json", jsonData, 0644)
@@ -20,7 +20,7 @@ func ExportReservToJson(fileName string) {
 }
 
 func ExportReservToCSV(fileName string) {
-	reserv := ListReservationsReturn()
+	reserv := ListReservations()
 	file, err := os.Create(fileName + ".csv")
 	if err != nil {
 		fmt.Println("Erreur lors de la création du fichier CSV:", err)

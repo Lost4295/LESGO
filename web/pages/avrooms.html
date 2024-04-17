@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
   <head>
     <title>Home Page</title>
     <link
@@ -30,27 +30,42 @@
               <label for="date">
                 Merci d'entrer une date que vous aimeriez voir :
               </label>
-              <div class="d-inline">
-                  <input class="form-control" type="datetime-local" id="date" name="date" />
-                  <input class="btn btn-primary" type="submit" value="Rechercher" />
-                </div>
+              <input
+                class="form-control"
+                type="datetime-local"
+                id="date"
+                name="date"
+              />
+              <label for="date">
+                Ou sinon, merci d'entrer une salle que vous aimeriez voir :
+              </label>
+              <select name="room" class="form-control" id="room">
+                {{ range $i, $e := . }} {{ if eq $i 0 }} {{ range $f := $e }}
+                <option value="{{$f.Id}}">{{$f.Id }} : {{.Name }}</option>
+                {{end}} {{end}} {{end}}
+              </select>
+              <input class="btn btn-primary" type="submit" value="Rechercher" />
             </form>
-            <table class="table table-bordered table-hover">
+            <br />
+            <table class="table table-bordered table-hover" >
               <tr>
-                <th>Numéro de la salle</th>
-                <th>Capacité</th>
-                <th>Disponibilité</th>
+				  <th>Id de la réservation</th>
+				  <th>Nom de la salle</th>
+                <th>Date de début</th>
+                <th>Date de fin</th>
               </tr>
-              {{range .}}
+              {{ range $i, $e := . }} {{ if eq $i 1 }} {{ range $f := $e }}
               <tr>
-                <td>{{.Id}}</td>
-                <td>{{.Capacity}}</td>
+                <td>{{$f.Id}}</td>
+                <td>{{$f.RoomName}}</td>
+				<td>{{$f.Date}}</td>
+				<td></td>
               </tr>
               {{else}}
               <tr>
                 <td colspan="3">Aucune salle existante.</td>
               </tr>
-              {{end}}
+              {{end}}{{end}} {{end}}
             </table>
             <div>
               <a class="btn btn-primary" href="/home"> Retour</a>

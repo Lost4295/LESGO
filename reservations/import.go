@@ -27,7 +27,7 @@ func ImportReservFromJson(filename string) ([]Reservation, error) {
 	}
 
 	for _, reservation := range reservations {
-		CreateReservationReturn(reservation.RoomId, truncateSeconds(reservation.Date))
+		CreateReservation(reservation.RoomId, truncateSeconds(reservation.Date))
 	}
 
 	return reservations, nil
@@ -73,7 +73,7 @@ func ImportReservFromCSV(filename string) ([]Reservation, error) {
 
 		date := truncateSeconds(dateStr)
 
-		CreateReservationReturn(roomID, date)
+		CreateReservation(roomID, date)
 
 		reservation := Reservation{
 			Id:       id,

@@ -8,7 +8,7 @@ import (
 	"os"
 	"slices"
 	"strconv"
-
+	"LESGO/db"
 	"github.com/joho/godotenv"
 )
 
@@ -74,14 +74,13 @@ func Start() {
 	} else {
 		noWeb, _ = strconv.ParseBool(check)
 	}
-	// fmt.Println("verbose : ", verbose, " noCli : ", noCli, " magenta : ", magenta, " noWeb : ", noWeb)
-	// os.Exit(0)
 	if magenta {
 		fmt.Print(MAGENTA)
 	}
 	if !noWeb {
 		web.Main()
 	}
+	db.CheckConnection()
 }
 
 func ShowMenu() {
