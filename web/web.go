@@ -62,7 +62,7 @@ func availableRoomsHandler(w http.ResponseWriter, r *http.Request) {
 	if (hasDate && date != "") || (hasRoom && room != "") {
 		log.Printf("got POST request. date(%t)=%s, room(%t)=%s\n",
 			hasDate, date, hasRoom, room)
-		if hasDate {
+		if date != "" {
 			data = append(data, res.ListReservationsByDate(date))
 		} else {
 			i, _ := strconv.Atoi(room)
