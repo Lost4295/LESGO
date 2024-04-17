@@ -7,6 +7,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -39,15 +40,21 @@ const (
 	GREEN      = "\033[32;01m"
 	BLANC      = "\033[37;07m"
 	BLUE	   = "\033[34;01m"
+	MAGENTA   = "\033[35;01m"
 )
 
 func main() {
-	var verbose bool = false
-	if len(os.Args) >= 2 && (os.Args[1] == "-v" || os.Args[1] == "--verbose") {
+	var verbose, magenta bool = false, false
+	if slices.Contains(os.Args,"-v") || slices.Contains(os.Args,"--verbose") {
 		verbose = true
 	}
 
+	if slices.Contains(os.Args, "-m") || slices.Contains(os.Args, "--magenta") {
+		magenta = true
+	}
+
 	os.Setenv("verbose", strconv.FormatBool(verbose))
+	os.Setenv("magenta", strconv.FormatBool(magenta))
 	web.Main()
 	db.ConnectToDatabase()
 	// fmt.Println(time.DateTime)
