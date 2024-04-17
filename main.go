@@ -227,7 +227,7 @@ func main() {
 			fmt.Printf("\n%sListe des salles disponibles :%s\n", BLUE, END)
 			res.AreFree(year + "-" + month + "-" + day + " " + hour + ":" + minute)
 		case 3:
-			fmt.Printf("\n%sCréer une réservation%s", BLUE, END)
+			fmt.Printf("\n%sCréer une réservation%s\n", BLUE, END)
 			fmt.Print("%sEntrez le numéro de la salle : %s", GREEN, END)
 			scanner.Scan()
 			salle, err := strconv.Atoi(scanner.Text())
@@ -371,17 +371,17 @@ func main() {
 
 			res.CreateReservation(salle, year+"-"+month+"-"+day+" "+hour+":"+minute)
 		case 4:
-			fmt.Printf("\n%sAnnuler une réservation%s", BLUE, END)
+			fmt.Printf("\n%sAnnuler une réservation%s\n", BLUE, END)
 			fmt.Print("%sEntrez le numéro de la réservation : %s", GREEN, END)
 			scanner.Scan()
 			id, err := strconv.Atoi(scanner.Text())
 			handleErr(err)
 			res.DeleteReservation(id)
 		case 5:
-			fmt.Printf("\n%sVisualiser les réservations%s", BLUE, END)
+			fmt.Printf("\n%sVisualiser les réservations%s\n", BLUE, END)
 			res.ListReservations()
 		case 6:
-			fmt.Printf("\n%sExporter les réservations%s", BLUE, END)
+			fmt.Printf("\n%sExporter les réservations%s\n", BLUE, END)
 			fmt.Print("%sEntrez le format de l'export (json/csv) : %s", GREEN, END)
 			scanner.Scan()
 			input := scanner.Text()
@@ -395,8 +395,8 @@ func main() {
 				fmt.Printf("\n%sErreur : Format incorrect%s", RED, END)
 			}
 		case 7:
-			fmt.Printf("\n%sImporter des réservations%s", BLUE, END)
-			fmt.Printf("\n%sEntrez le nom du fichier : %s", GREEN, END)
+			fmt.Printf("\n%sImporter des réservations%s\n", BLUE, END)
+			fmt.Printf("%sEntrez le nom du fichier : %s", GREEN, END)
 			scanner.Scan()
 			input := scanner.Text()
 			parts := strings.Split(input, ".")
