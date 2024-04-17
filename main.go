@@ -55,6 +55,9 @@ func main() {
 
 	os.Setenv("verbose", strconv.FormatBool(verbose))
 	os.Setenv("magenta", strconv.FormatBool(magenta))
+	if magenta {
+		fmt.Print(MAGENTA)
+	}
 	web.Main()
 	db.ConnectToDatabase()
 	// fmt.Println(time.DateTime)
@@ -63,7 +66,6 @@ func main() {
 	var err error
 
 	for {
-
 		fmt.Printf("%sBienvenue dans le Service de Réservation en Ligne%s", BLUE, END)
 		fmt.Println("%s-------------------------------------------------%s", BLANC, END)
 		showMenu()
