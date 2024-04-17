@@ -3,7 +3,7 @@ package main
 import (
 	"LESGO/db"
 	res "LESGO/reservations"
-	"LESGO/web"
+	// "LESGO/web"
 	"bufio"
 	"fmt"
 	"os"
@@ -59,15 +59,15 @@ func main() {
 		fmt.Print(MAGENTA)
 	}
 	// web.Main()
-	// db.ConnectToDatabase()
+	db.ConnectToDatabase()
 	// fmt.Println(time.DateTime)
 	scanner := bufio.NewScanner(os.Stdin)
 	var number int
 	var err error
 
 	for {
-		fmt.Printf("%sBienvenue dans le Service de Réservation en Ligne%s\n", BLUE, END)
-		fmt.Println("------------------------------------------------------")
+		fmt.Println("Bienvenue dans le Service de Réservation en Ligne")
+		fmt.Println("-------------------------------------------------")
 		showMenu()
 		fmt.Print("Sélectionnez une option : ")
 
