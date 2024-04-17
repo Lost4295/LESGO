@@ -3,6 +3,7 @@ package reservations
 import (
 	"encoding/csv"
 	"encoding/json"
+	"io"
 	"os"
 	"strconv"
 	"strings"
@@ -56,7 +57,9 @@ func ImportReservFromCSV(filename string) ([]Reservation, error) {
 
 	for {
 		line, err := reader.Read()
-		if err != nil {
+		if err == io.EOF {
+			break
+		} else if err != nil {
 			return nil, err
 		}
 
