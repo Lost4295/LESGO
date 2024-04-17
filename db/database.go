@@ -2,15 +2,15 @@ package db
 
 import (
 	"database/sql"
-
+	"os"
 	_ "github.com/go-sql-driver/mysql"
 )
 
 func Connect(user string, password string) (*sql.DB, error) {
 
-	host := "localhost"
-	port := "3306"
-	dbname := "mydatabase"
+	host := os.Getenv("HOST")
+	port := os.Getenv("PORT")
+	dbname := os.Getenv("DBNAME")
 	db, err := sql.Open("mysql", user+":"+password+"@tcp("+host+":"+port+")/"+dbname)
 	if err != nil {
 		return db, err
@@ -31,7 +31,7 @@ func initDB(db *sql.DB) (*sql.DB, error) {
 	if err != nil {
 		return db, err
 	}
-	err = createTable(db, "reservation", "room_id INT, date DATETIME")
+	err = createTable(db, "reservation", "room_id INT, date_debut DATETIME, date_fin DATETIME, FOREIGN KEY (room_id) REFERENCES room(id)")
 	if err != nil {
 		return db, err
 	}

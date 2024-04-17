@@ -13,6 +13,7 @@ import (
 const (
 	END   = "\033[0m"
 	ROUGE = "\033[31;01;51m"
+	LR	= "/list_reservations"
 )
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
@@ -20,7 +21,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	if V == "true" {
 		log.Println("executing homeHandler")
 	}
-	renderTemplate(w, r, "home", nil)
+	renderTemplate(w, "home", nil)
 }
 
 func byeHandler(w http.ResponseWriter, r *http.Request) {
@@ -28,7 +29,7 @@ func byeHandler(w http.ResponseWriter, r *http.Request) {
 	if V == "true" {
 		log.Println("executing byeHandler")
 	}
-	renderTemplate(w, r, "byebye", nil)
+	renderTemplate(w, "byebye", nil)
 }
 
 func roomsHandler(w http.ResponseWriter, r *http.Request) {
@@ -37,7 +38,7 @@ func roomsHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("executing roomsHandler")
 	}
 	data := res.ListRoomsReturn()
-	renderTemplate(w, r, "rooms", data)
+	renderTemplate(w, "rooms", data)
 }
 
 func availableRoomsHandler(w http.ResponseWriter, r *http.Request) {
@@ -55,7 +56,7 @@ func availableRoomsHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		data = res.ListRoomsReturn()
 	}
-	renderTemplate(w, r, "avrooms", data)
+	renderTemplate(w, "avrooms", data)
 }
 
 func cancelReservationHandler(w http.ResponseWriter, r *http.Request) {
@@ -70,10 +71,10 @@ func cancelReservationHandler(w http.ResponseWriter, r *http.Request) {
 			hasroom, room)
 		i, _ := strconv.Atoi(room)
 		res.DeleteReservation(i)
-		http.Redirect(w, r, "/list_reservations", http.StatusFound)
+		http.Redirect(w, r, LR, http.StatusFound)
 	} else {
 		data := res.ListReservationsReturn()
-		renderTemplate(w, r, "canres", data)
+		renderTemplate(w, "canres", data)
 	}
 }
 
@@ -94,10 +95,10 @@ func createReservationHandler(w http.ResponseWriter, r *http.Request) {
 			hasDate, date,
 			hasRoom, room, e)
 		res.CreateReservation(e, date)
-		http.Redirect(w, r, "/list_reservations", http.StatusFound)
+		http.Redirect(w, r, LR, http.StatusFound)
 	} else {
 		data := res.ListRoomsReturn()
-		renderTemplate(w, r, "createres", data)
+		renderTemplate(w, "createres", data)
 	}
 }
 
@@ -107,7 +108,7 @@ func listReservationsHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("executing listReservationsHandler")
 	}
 	data := res.ListReservationsReturn()
-	renderTemplate(w, r, "listres", data)
+	renderTemplate(w, "listres", data)
 }
 
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
@@ -115,7 +116,7 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	if V == "true" {
 		log.Println("executing notFoundHandler")
 	}
-	renderTemplate(w, r, "notfound", nil)
+	renderTemplate(w, "notfound", nil)
 }
 
 var templates = template.Must(template.ParseFiles(
@@ -124,7 +125,7 @@ var templates = template.Must(template.ParseFiles(
 	"web/createres.html", "web/rooms.html",
 	"web/listres.html", "web/notfound.html"))
 
-func renderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, data any) {
+func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
 	// str := "web/" + tmpl + ".html"
 	htmlstr := tmpl + ".html"
 	// if _, err := os.Stat(str); err != nil {
@@ -152,7 +153,7 @@ func Main() {
 	http.HandleFunc("/notfound", notFoundHandler)
 	http.HandleFunc("/create_reservation", createReservationHandler)
 	http.HandleFunc("/cancel_reservation", cancelReservationHandler)
-	http.HandleFunc("/list_reservations", listReservationsHandler)
+	http.HandleFunc(LR, listReservationsHandler)
 	http.HandleFunc("/byebye", byeHandler)
 	V := os.Getenv("verbose")
 	if V == "true" {

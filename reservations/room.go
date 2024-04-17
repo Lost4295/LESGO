@@ -14,6 +14,7 @@ type Room struct {
 	Name     string `json:"name"`
 	Capacity int    `json:"capacity"`
 }
+const ERROR = "Erreur lors de la récupération des réservations"
 
 type Reservation struct {
 	Id       int    `json:"id"`
@@ -63,7 +64,7 @@ func AreFreeReturn(value string) []Room {
 	var freeRooms []Room
 	rows, err := db.Query("SELECT room_id FROM reservation WHERE date = ?", date2)
 	if err != nil {
-		fmt.Println("Erreur lors de la récupération des réservations")
+		fmt.Println(ERROR)
 		fmt.Println(err)
 		return freeRooms
 	}
@@ -161,7 +162,7 @@ func ListReservations() {
 	db, _ := db.Connect("user", "password")
 	rows, err := db.Query("SELECT id, room_id, date FROM reservation")
 	if err != nil {
-		fmt.Println("Erreur lors de la récupération des réservations")
+		fmt.Println(ERROR)
 		fmt.Println(err)
 		return
 	}
@@ -190,7 +191,7 @@ func ListReservationsReturn() []Reservation {
 	var reservations []Reservation
 	rows, err := db.Query("SELECT id, room_id, date FROM reservation")
 	if err != nil {
-		fmt.Println("Erreur lors de la récupération des réservations")
+		fmt.Println(ERROR)
 		fmt.Println(err)
 		return reservations
 	}
@@ -198,20 +199,20 @@ func ListReservationsReturn() []Reservation {
 	for rows.Next() {
 		err = rows.Scan(&reserv.Id, &reserv.RoomId, &reserv.Date)
 		if err != nil {
-			fmt.Println("Erreur lors de la récupération des réservations")
+			fmt.Println(ERROR)
 			fmt.Println(err)
 			return reservations
 		}
 		rows2, err := db.Query("SELECT name FROM room WHERE id = ?", reserv.RoomId)
 		if err != nil {
-			fmt.Println("Erreur lors de la récupération des réservations")
+			fmt.Println(ERROR)
 			fmt.Println(err)
 			return reservations
 		}
 		for rows2.Next() {
 			err = rows2.Scan(&reserv.RoomName)
 			if err != nil {
-				fmt.Println("Erreur lors de la récupération des réservations")
+				fmt.Println(ERROR)
 				fmt.Println(err)
 				return reservations
 			}
