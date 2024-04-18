@@ -16,14 +16,21 @@ type Room struct {
 	Capacity int    `json:"capacity"`
 }
 
-const ERROR = "Erreur lors de la récupération des réservations"
-
 type Reservation struct {
-	Id       int    `json:"id"`
-	RoomId   int    `json:"room_id"`
-	Date     string `json:"date"`
-	RoomName string `json:"room_name"`
+	Id        int    `json:"id"`
+	RoomId    int    `json:"room_id"`
+	DateDebut string `json:"date_debut"`
+	DateFin   string `json:"date_fin"`
+	RoomName  string `json:"room_name"`
 }
+
+const (
+	ERROR       = "Erreur lors de la récupération des réservations"
+	SELECT      = "SELECT name FROM room WHERE id = ?"
+	ERRSELECTED = "La salle est déjà réservée pendant les dates sélectionnées."
+	RED         = "\033[31;01;51m"
+	END         = "\033[0m"
+)
 
 func ConvertStringToDatetime(value string) time.Time {
 	layout := "2006-01-02 15:04"
@@ -52,32 +59,69 @@ func ListRooms() []Room {
 	return rooms
 }
 
-func CreateReservation(id int, date string) int {
+func CreateReservation(id int, date time.Time, date2 time.Time) int {
 	db, _ := db.Connect(os.Getenv("USER"), os.Getenv("PASSWORD"))
 	defer db.Close()
-	newDate := ConvertStringToDatetime(date)
-	_, err := db.Exec("INSERT INTO reservation (room_id, date) VALUES (?, ?)", id, newDate)
-	if err == nil {
-		return 1
+
+	//TODO Check if r
+	rows, err := db.Query("SELECT date_debut, date_fin FROM reservation where room_id= ?", id)
+	if err != nil {
+		fmt.Println(ERROR)
+		fmt.Println(err)
+		return 0
 	}
-	return 0
+	for rows.Next() {
+		var dateDebut string
+		var dateFin string
+		err = rows.Scan(&dateDebut, &dateFin)
+		if err != nil {
+			fmt.Println(ERROR)
+			fmt.Println(err)
+			return 0
+		}
+		if date.Before(ConvertStringToDatetime(truncateSeconds(dateDebut))) && date2.After(ConvertStringToDatetime(truncateSeconds(dateDebut))) && date2.Before(ConvertStringToDatetime(truncateSeconds(dateFin))) {
+			fmt.Println(RED, ERRSELECTED, END)
+			return 0
+		}
+		if date.Before(ConvertStringToDatetime(truncateSeconds(dateFin))) && date.After(ConvertStringToDatetime(truncateSeconds(dateDebut))) && date2.After(ConvertStringToDatetime(truncateSeconds(dateFin))) {
+			fmt.Println(RED, ERRSELECTED, END)
+			return 0
+		}
+		if date.After(ConvertStringToDatetime(truncateSeconds(dateDebut))) && date2.Before(ConvertStringToDatetime(truncateSeconds(dateFin))) {
+			fmt.Println(RED, ERRSELECTED, END)
+			return 0
+		}
+	}
+
+	_, err = db.Exec("INSERT INTO reservation (room_id, date_debut, date_fin) VALUES (?, ?, ?)", id, date, date2)
+	if err != nil {
+		return 0
+	}
+	return 1
 }
 
 func DeleteReservation(id int) int {
 	db, _ := db.Connect(os.Getenv("USER"), os.Getenv("PASSWORD"))
 	defer db.Close()
-	_, err := db.Exec("DELETE FROM reservation WHERE id =", id)
-	if err == nil {
-		return 1
+	rows, err := db.Query("Select id FROM reservation WHERE id = ?", id)
+	if err != nil {
+		return -1
 	}
-	return 0
+	if !rows.Next() {
+		return 0
+	}
+	_, err = db.Exec("DELETE FROM reservation WHERE id = ?", id)
+	if err != nil {
+		return -1
+	}
+	return 1
 }
 
 func ListReservations() []Reservation {
 	db, _ := db.Connect(os.Getenv("USER"), os.Getenv("PASSWORD"))
 	defer db.Close()
 	var reservations []Reservation
-	rows, err := db.Query("SELECT id, room_id, date FROM reservation")
+	rows, err := db.Query("SELECT id, room_id, date_debut, date_fin FROM reservation")
 	if err != nil {
 		fmt.Println(ERROR)
 		fmt.Println(err)
@@ -85,13 +129,13 @@ func ListReservations() []Reservation {
 	}
 	var reserv Reservation
 	for rows.Next() {
-		err = rows.Scan(&reserv.Id, &reserv.RoomId, &reserv.Date)
+		err = rows.Scan(&reserv.Id, &reserv.RoomId, &reserv.DateDebut, &reserv.DateFin)
 		if err != nil {
 			fmt.Println(ERROR)
 			fmt.Println(err)
 			return reservations
 		}
-		rows2, err := db.Query("SELECT name FROM room WHERE id = ?", reserv.RoomId)
+		rows2, err := db.Query(SELECT, reserv.RoomId)
 		if err != nil {
 			fmt.Println(ERROR)
 			fmt.Println(err)
@@ -115,16 +159,17 @@ func ListReservationsByDate(date string) []Reservation {
 	defer db.Close()
 	var Reservations []Reservation
 	val := ConvertStringToDatetime(date)
-	rows, _ := db.Query("SELECT id, room_id, date FROM reservation WHERE date = ?", val)
+	// TODO Voir pour faire un between plutôt sur la journée
+	rows, _ := db.Query("SELECT id, room_id, date_debut, date_fin FROM reservation WHERE date_debut = ? OR WHERE date_fin = ?", val)
 	for rows.Next() {
 		var reservation Reservation
-		err := rows.Scan(&reservation.Id, &reservation.RoomId, &reservation.Date)
+		err := rows.Scan(&reservation.Id, &reservation.RoomId, &reservation.DateDebut)
 		if err != nil {
 			fmt.Println(ERROR)
 			fmt.Println(err)
 			return Reservations
 		}
-		rows2, err := db.Query("SELECT name FROM room WHERE id = ?", reservation.RoomId)
+		rows2, err := db.Query(SELECT, reservation.RoomId)
 		if err != nil {
 			fmt.Println(ERROR)
 			fmt.Println(err)
@@ -146,16 +191,17 @@ func ListReservationsByRoom(id int) []Reservation {
 	db, _ := db.Connect(os.Getenv("USER"), os.Getenv("PASSWORD"))
 	defer db.Close()
 	var Reservations []Reservation
-	rows, _ := db.Query("SELECT id, room_id, date FROM reservation WHERE room_id = ?", id)
+	// TODO Voir pour faire un between plutôt sur la journée
+	rows, _ := db.Query("SELECT id, room_id, date_debut, date_fin FROM reservation WHERE room_id = ?", id)
 	for rows.Next() {
 		var reservation Reservation
-		err := rows.Scan(&reservation.Id, &reservation.RoomId, &reservation.Date)
+		err := rows.Scan(&reservation.Id, &reservation.RoomId, &reservation.DateDebut, &reservation.DateFin)
 		if err != nil {
 			fmt.Println(ERROR)
 			fmt.Println(err)
 			return Reservations
 		}
-		rows2, err := db.Query("SELECT name FROM room WHERE id = ?", id)
+		rows2, err := db.Query(SELECT, id)
 		if err != nil {
 			fmt.Println(ERROR)
 			fmt.Println(err)
@@ -172,4 +218,15 @@ func ListReservationsByRoom(id int) []Reservation {
 		Reservations = append(Reservations, reservation)
 	}
 	return Reservations
+}
+
+func CheckSalle(id int) int {
+	db, _ := db.Connect(os.Getenv("USER"), os.Getenv("PASSWORD"))
+	defer db.Close()
+	rows, _ := db.Query("SELECT id FROM room WHERE id = ?", id)
+
+	if rows.Next() {
+		return 1
+	}
+	return 0
 }

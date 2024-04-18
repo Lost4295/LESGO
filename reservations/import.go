@@ -27,7 +27,7 @@ func ImportReservFromJson(filename string) ([]Reservation, error) {
 	}
 
 	for _, reservation := range reservations {
-		CreateReservation(reservation.RoomId, truncateSeconds(reservation.Date))
+		CreateReservation(reservation.RoomId, ConvertStringToDatetime(truncateSeconds(reservation.DateDebut)), ConvertStringToDatetime(truncateSeconds(reservation.DateFin)))
 	}
 
 	return reservations, nil
@@ -65,21 +65,26 @@ func ImportReservFromCSV(filename string) ([]Reservation, error) {
 
 		idStr := line[columnMap["Id"]]
 		roomIDStr := line[columnMap["RoomId"]]
-		dateStr := line[columnMap["Date"]]
+		dateStr := line[columnMap["DateDebut"]]
+		dateStr2 := line[columnMap["DateFin"]]
 		roomName := line[columnMap["RoomName"]]
 
 		id, _ := strconv.Atoi(idStr)
 		roomID, _ := strconv.Atoi(roomIDStr)
 
-		date := truncateSeconds(dateStr)
+		Date := truncateSeconds(dateStr)
+		Date2 := truncateSeconds(dateStr2)
 
-		CreateReservation(roomID, date)
+		date := ConvertStringToDatetime(Date)
+		date2 := ConvertStringToDatetime(Date2)
+		CreateReservation(roomID, date, date2)
 
 		reservation := Reservation{
-			Id:       id,
-			RoomId:   roomID,
-			Date:     date,
-			RoomName: roomName,
+			Id:        id,
+			RoomId:    roomID,
+			DateDebut: Date,
+			DateFin:   Date2,
+			RoomName:  roomName,
 		}
 
 		reservations = append(reservations, reservation)

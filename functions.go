@@ -12,9 +12,11 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const INFO = "\n%sPour quitter, entrez '0' %s"
+const NORES = "Aucune réservation existante."
 
 func HandleErr(err error) {
 	if err != nil {
@@ -64,7 +66,7 @@ func Start() {
 
 	val = strconv.FormatBool(clear)
 	check = os.Getenv("CLEAR")
-	if check != val && clear{
+	if check != val && clear {
 		fmt.Println("Setting CLEAR to ", val)
 		os.Setenv("CLEAR", val)
 	} else {
@@ -88,13 +90,12 @@ func Start() {
 func ShowMenu() {
 	fmt.Println()
 	fmt.Println("1. Lister toutes les salles")
-	fmt.Println("2. Lister les salles disponibles")
-	fmt.Println("3. Créer une réservation")
-	fmt.Println("4. Annuler une réservation")
-	fmt.Println("5. Visualiser les réservations")
-	fmt.Println("6. Visualiser les réservations d'une salle")
-	fmt.Println("7. Exporter les réservations")
-	fmt.Println("8. Importer des réservations")
+	fmt.Println("2. Créer une réservation")
+	fmt.Println("3. Annuler une réservation")
+	fmt.Println("4. Visualiser les réservations")
+	fmt.Println("5. Visualiser les réservations d'une salle")
+	fmt.Println("6. Exporter les réservations")
+	fmt.Println("7. Importer des réservations")
 	fmt.Println("0. Quitter")
 	fmt.Println()
 }
@@ -285,24 +286,14 @@ func handleZero() {
 func handleOne() {
 	fmt.Printf("\n%sListe des salles :%s\n", BLUE, END)
 	rooms := res.ListRooms()
+	if len(rooms) == 0 {
+		fmt.Println(RED, "Aucune salle existante.", END)
+	}
 	for id, room := range rooms {
 		fmt.Printf("%d : Salle n°%d- %-15s (Capacité: %d)\n", id, room.Id, room.Name, room.Capacity)
 	}
 }
 func handleTwo(scanner *bufio.Scanner) error {
-	year, month, day, hour, minute, err := CreateDate(scanner)
-	if err != nil {
-		return err
-	}
-	fmt.Println("Liste des salles disponibles :")
-	reservations := res.ListReservationsByDate(year + "-" + month + "-" + day + " " + hour + ":" + minute)
-	for id, reservation := range reservations {
-		fmt.Printf("%d - Salle %d réservée le %s\n", id, reservation.RoomId, reservation.Date)
-	}
-	//TODO reformat
-	return nil
-}
-func handleThree(scanner *bufio.Scanner) error {
 	fmt.Printf("\n%sCréer une réservation%s\n", BLUE, END)
 	fmt.Printf("%sEntrez le numéro de la salle ou 0 pour annuler : %s", GREEN, END)
 	scanner.Scan()
@@ -311,7 +302,11 @@ func handleThree(scanner *bufio.Scanner) error {
 	if salle == 0 {
 		return errors.New("Annulation")
 	}
-	fmt.Print("Entrez la date de la réservation : ")
+	if res.CheckSalle(salle) == 0 {
+		fmt.Println(RED, "Erreur : Salle inexistante", END)
+		return errors.New("Annulation")
+	}
+	fmt.Print("Entrez la date de début de la réservation : ")
 	if err != nil {
 		return errors.New("Annulation")
 	}
@@ -319,11 +314,28 @@ func handleThree(scanner *bufio.Scanner) error {
 	if err != nil {
 		return errors.New("Annulation")
 	}
-	res.CreateReservation(salle, year+"-"+month+"-"+day+" "+hour+":"+minute)
-	// TODO Retour de fonction
+	date1 := year + "-" + month + "-" + day + " " + hour + ":" + minute
+	fmt.Print("Entrez la date de fin de la réservation : ")
+	year, month, day, hour, minute, err = CreateDate(scanner)
+	if err != nil {
+		return errors.New("Annulation")
+	}
+	date2 := year + "-" + month + "-" + day + " " + hour + ":" + minute
+	datetime1 := res.ConvertStringToDatetime(date1)
+	datetime2 := res.ConvertStringToDatetime(date2)
+	if datetime1.After(datetime2) {
+		fmt.Println(RED, "Erreur : La date de début doit être avant la date de fin", END)
+		return errors.New("Annulation")
+	}
+	time.Sleep(1 * time.Second)
+	if res.CreateReservation(salle, datetime1, datetime2) == 1 {
+		fmt.Println(GREEN, "Réservation créée", END)
+	} else {
+		fmt.Println(RED, "Erreur lors de la création de la réservation", END)
+	}
 	return nil
 }
-func handleFour(scanner *bufio.Scanner) error {
+func handleThree(scanner *bufio.Scanner) error {
 	fmt.Println("Annuler une réservation")
 	fmt.Print("Entrez le numéro de la réservation ou 0 pour annuler : ")
 	scanner.Scan()
@@ -332,19 +344,30 @@ func handleFour(scanner *bufio.Scanner) error {
 	if id == 0 {
 		return errors.New("Annulation")
 	}
-	res.DeleteReservation(id)
-	// TODO Retour de fonction
+	time.Sleep(1 * time.Second)
+	ret := res.DeleteReservation(id)
+	if ret == 1 {
+		fmt.Println(GREEN, "Réservation bien annulée.", END)
+	} else if ret == 0 {
+		fmt.Println(RED, "Erreur : Réservation inexistante", END)
+	} else {
+		fmt.Println(RED, "Erreur lors de la création de la réservation", END)
+	}
+
 	return nil
 }
-func handleFive() {
+func handleFour() {
 	fmt.Println("Visualiser les réservations")
 	reservations := res.ListReservations()
-	for id, reservation := range reservations {
-		fmt.Printf(RES, id, reservation.Id, reservation.RoomId, reservation.Date)
+	if len(reservations) == 0 {
+		fmt.Println(RED, NORES, END)
+		return
 	}
-	//TODO reformat
+	for id, reservation := range reservations {
+		fmt.Printf(RES, id, reservation.Id, reservation.RoomId, reservation.DateDebut, reservation.DateFin)
+	}
 }
-func handleSix(scanner *bufio.Scanner) error {
+func handleFive(scanner *bufio.Scanner) error {
 	fmt.Println("Visualiser les réservations d'une salle")
 	fmt.Println("Voulez-vous filtrer par date ou par salle ?")
 	fmt.Println("1. Par date")
@@ -354,14 +377,20 @@ func handleSix(scanner *bufio.Scanner) error {
 	choix, err := strconv.Atoi(scanner.Text())
 	HandleErr(err)
 	if choix == 1 {
+		fmt.Print("Entrez la date de début de la réservation : ")
 		year, month, day, hour, minute, err := CreateDate(scanner)
 		if err != nil {
 			return errors.New("Annulation")
 		}
-		reservations := res.ListReservationsByDate(year + "-" + month + "-" + day + " " + hour + ":" + minute)
+		date1 := year + "-" + month + "-" + day + " " + hour + ":" + minute
+		reservations := res.ListReservationsByDate(date1)
+		if len(reservations) == 0 {
+			fmt.Println(RED, NORES, END)
+			return nil
+		}
 		for id, reservation := range reservations {
-			fmt.Printf(RES, id, reservation.Id, reservation.RoomId, reservation.Date)
-		} //TODO reformat
+			fmt.Printf(RES, id, reservation.Id, reservation.RoomId, reservation.DateDebut, reservation.DateFin)
+		}
 	} else if choix == 2 {
 		fmt.Print("Entrez le numéro de la salle ou 0 pour annuler : ")
 		scanner.Scan()
@@ -370,16 +399,24 @@ func handleSix(scanner *bufio.Scanner) error {
 		if id == 0 {
 			return errors.New("Annulation")
 		}
+		if res.CheckSalle(id) == 0 {
+			fmt.Println(RED, "Erreur : Salle inexistante", END)
+			return nil
+		}
 		reservations := res.ListReservationsByRoom(id)
+		if len(reservations) == 0 {
+			fmt.Println(RED, NORES, END)
+			return nil
+		}
 		for id, reservation := range reservations {
-			fmt.Printf(RES, id, reservation.Id, reservation.RoomId, reservation.Date)
-		} //TODO reformat
+			fmt.Printf(RES, id, reservation.Id, reservation.RoomId, reservation.DateDebut, reservation.DateFin)
+		}
 	} else {
 		fmt.Println(RED, "Erreur : Choix incorrect", END)
 	}
 	return nil
 }
-func handleSeven(scanner *bufio.Scanner) {
+func handleSix(scanner *bufio.Scanner) {
 	fmt.Println("Exporter les réservations")
 	fmt.Print("Entrez le format de l'export (json/csv) : ")
 	scanner.Scan()
@@ -393,7 +430,7 @@ func handleSeven(scanner *bufio.Scanner) {
 		fmt.Println("Erreur : Format incorrect")
 	}
 }
-func handleEight(scanner *bufio.Scanner) {
+func handleSeven(scanner *bufio.Scanner) {
 	fmt.Println("Importer des réservations")
 	fmt.Print("Entrez le nom du fichier : ")
 	scanner.Scan()

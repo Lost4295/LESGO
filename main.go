@@ -15,7 +15,7 @@ const (
 	BLANC      = "\033[37;07m"
 	BLUE       = "\033[34;01m"
 	WHITE      = "\033[37;07m"
-	RES        = "%d - Reservation n°%d : Salle %d réservée le %s\n"
+	RES        = "%d - Reservation n°%d : Salle %d réservée du %s au %s\n"
 )
 
 func main() {
@@ -25,7 +25,7 @@ func main() {
 	// Il faut pouvoir lancer le programme sans le CLI
 	// noCli, err := strconv.ParseBool(os.Getenv("NO_CLI"))
 	// HandleErr(err)
-	clear, _:= strconv.ParseBool(os.Getenv("CLEAR"))
+	clear, _ := strconv.ParseBool(os.Getenv("CLEAR"))
 
 	scanner := bufio.NewScanner(os.Stdin)
 	var number int = -1
@@ -61,34 +61,27 @@ func main() {
 		case 2:
 			err = handleTwo(scanner)
 			if err != nil {
-				fmt.Println(RED,"Annulation",END)
+				fmt.Println(RED, "Annulation", END)
 				continue
 			}
 		case 3:
 			err = handleThree(scanner)
 			if err != nil {
-				fmt.Println(RED,"Annulation",END)
+				fmt.Println(RED, "Annulation", END)
 				continue
 			}
 		case 4:
-			err = handleFour(scanner)
-			if err != nil {
-				fmt.Println(RED,"Annulation",END)
-				continue
-			}
+			handleFour()
 		case 5:
-			handleFive()
-		case 6:
-			err = handleSix(scanner)
+			err = handleFive(scanner)
 			if err != nil {
-				fmt.Println(RED,"Annulation",END)
+				fmt.Println(RED, "Annulation", END)
 				continue
 			}
+		case 6:
+			handleSix(scanner)
 		case 7:
 			handleSeven(scanner)
-		case 8:
-			handleEight(scanner)
 		}
 	}
 }
-

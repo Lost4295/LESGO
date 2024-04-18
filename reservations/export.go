@@ -42,7 +42,8 @@ func ExportReservToCSV(fileName string) {
 			strconv.Itoa(r.Id),
 			strconv.Itoa(r.RoomId),
 			// ConvertDatetimeToString(r.Date),
-			r.Date,
+			r.DateDebut,
+			r.DateFin,
 			r.RoomName,
 		}
 		if err := writer.Write(record); err != nil {

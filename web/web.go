@@ -102,15 +102,18 @@ func createReservationHandler(w http.ResponseWriter, r *http.Request) {
 
 	hasDate := r.URL.Query().Has("date")
 	date := r.URL.Query().Get("date")
+	hasDate2 := r.URL.Query().Has("date2")
+	date2 := r.URL.Query().Get("date2")
 	hasRoom := r.URL.Query().Has("room")
 	room := r.URL.Query().Get("room")
 
-	if hasDate && hasRoom {
+	if hasDate && hasRoom && hasDate2 {
 		e, _ := strconv.Atoi(room)
-		log.Printf("got POST request. date(%t)=%s, room(%t)=%s=%d\n",
+		log.Printf("got POST request. date(%t)=%s, date2(%t)=%s, room(%t)=%s=%d\n",
 			hasDate, date,
+			hasDate2, date2,
 			hasRoom, room, e)
-		res.CreateReservation(e, date)
+		res.CreateReservation(e, res.ConvertStringToDatetime(date), res.ConvertStringToDatetime(date2))
 		http.Redirect(w, r, LR, http.StatusFound)
 	} else {
 		data := res.ListRooms()
