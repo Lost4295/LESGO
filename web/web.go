@@ -107,7 +107,7 @@ func createReservationHandler(w http.ResponseWriter, r *http.Request) {
 	hasRoom := r.URL.Query().Has("room")
 	room := r.URL.Query().Get("room")
 
-	if hasDate && hasRoom && hasDate2 {
+	if hasDate && hasRoom && hasDate2 && date != "" && date2 != "" && room != "" {
 		e, _ := strconv.Atoi(room)
 		log.Printf("got POST request. date(%t)=%s, date2(%t)=%s, room(%t)=%s=%d\n",
 			hasDate, date,
@@ -153,7 +153,11 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
 
 func Main() {
 	var handler http.Handler
-	srv := &http.Server{Addr: ":9000", Handler: handler}
+	port := os.Getenv("WEB_PORT")
+	if port == ""{
+		port = "80"
+	}
+	srv := &http.Server{Addr: ":"+port, Handler: handler}
 	// http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/home", homeHandler)
 	http.HandleFunc("/die", func(w http.ResponseWriter, r *http.Request) {
@@ -170,7 +174,7 @@ func Main() {
 	http.HandleFunc("/byebye", byeHandler)
 	V := os.Getenv("verbose")
 	if V == "true" {
-		log.Println("Listening on :9000")
+		log.Println("Listening on :"+port)
 	}
 
 	go func() {
