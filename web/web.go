@@ -24,7 +24,18 @@ const (
 )
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
+	/*
+		Function to handle requests to the home page.
+
+		Parameters:
+			- w (http.ResponseWriter): HTTP response writer.
+			- r (*http.Request): HTTP request.
+
+		Returns:
+			Nothing.
+	*/
 	V := os.Getenv("verbose")
+	// Checks if the user has enabled logs
 	if V == "true" {
 		log.Println("executing homeHandler")
 	}
@@ -32,6 +43,16 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func byeHandler(w http.ResponseWriter, r *http.Request) {
+	/*
+		Function to handle requests to terminate the server.
+
+		Parameters:
+			- w (http.ResponseWriter): HTTP response writer.
+			- r (*http.Request): HTTP request.
+
+		Returns:
+			Nothing.
+	*/
 	V := os.Getenv("verbose")
 	if V == "true" {
 		log.Println("executing byeHandler")
@@ -40,6 +61,16 @@ func byeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func roomsHandler(w http.ResponseWriter, r *http.Request) {
+	/*
+		Function to handle requests to list rooms.
+
+		Parameters:
+			- w (http.ResponseWriter): HTTP response writer.
+			- r (*http.Request): HTTP request.
+
+		Returns:
+			Nothing.
+	*/
 	V := os.Getenv("verbose")
 	if V == "true" {
 		log.Println("executing roomsHandler")
@@ -49,10 +80,21 @@ func roomsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func availableRoomsHandler(w http.ResponseWriter, r *http.Request) {
+	/*
+		Function to handle requests to list available rooms.
+
+		Parameters:
+			- w (http.ResponseWriter): HTTP response writer.
+			- r (*http.Request): HTTP request.
+
+		Returns:
+			Nothing.
+	*/
 	V := os.Getenv("verbose")
 	if V == "true" {
 		log.Println("executing availableRoomsHandler")
 	}
+	// Retrieves the parameters/filters of the query
 	hasDate := r.URL.Query().Has("date")
 	date := r.URL.Query().Get("date")
 	hasRoom := r.URL.Query().Has("room")
@@ -62,6 +104,7 @@ func availableRoomsHandler(w http.ResponseWriter, r *http.Request) {
 	if (hasDate && date != "") || (hasRoom && room != "") {
 		log.Printf("got POST request. date(%t)=%s, room(%t)=%s\n",
 			hasDate, date, hasRoom, room)
+		// If a date filter is entered, we retrieve the reservations by date, otherwise by room
 		if date != "" {
 			data = append(data, res.ListReservationsByDate(date))
 		} else {
@@ -76,6 +119,16 @@ func availableRoomsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func cancelReservationHandler(w http.ResponseWriter, r *http.Request) {
+	/*
+		Function to handle requests to cancel a reservation.
+
+		Parameters:
+			- w (http.ResponseWriter): HTTP response writer.
+			- r (*http.Request): HTTP request.
+
+		Returns:
+			Nothing.
+	*/
 	V := os.Getenv("verbose")
 	if V == "true" {
 		log.Println("executing cancelReservationHandler")
@@ -87,6 +140,7 @@ func cancelReservationHandler(w http.ResponseWriter, r *http.Request) {
 			hasroom, room)
 		i, _ := strconv.Atoi(room)
 		res.DeleteReservation(i)
+		// Returns to the reservations list page (content in the constant)
 		http.Redirect(w, r, LR, http.StatusFound)
 	} else {
 		data := res.ListReservations()
@@ -95,6 +149,16 @@ func cancelReservationHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func createReservationHandler(w http.ResponseWriter, r *http.Request) {
+	/*
+		Function to handle requests to create a reservation.
+
+		Parameters:
+			- w (http.ResponseWriter): HTTP response writer.
+			- r (*http.Request): HTTP request.
+
+		Returns:
+			Nothing.
+	*/
 	V := os.Getenv("verbose")
 	if V == "true" {
 		log.Println("executing createReservationHandler")
@@ -122,6 +186,16 @@ func createReservationHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func listReservationsHandler(w http.ResponseWriter, r *http.Request) {
+	/*
+		Function to handle requests to list reservations.
+
+		Parameters:
+			- w (http.ResponseWriter): HTTP response writer.
+			- r (*http.Request): HTTP request.
+
+		Returns:
+			Nothing.
+	*/
 	V := os.Getenv("verbose")
 	if V == "true" {
 		log.Println("executing listReservationsHandler")
@@ -131,6 +205,16 @@ func listReservationsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
+	/*
+		Function to handle requests for non-existent routes.
+
+		Parameters:
+			- w (http.ResponseWriter): HTTP response writer.
+			- r (*http.Request): HTTP request.
+
+		Returns:
+			Nothing.
+	*/
 	V := os.Getenv("verbose")
 	if V == "true" {
 		log.Println("executing notFoundHandler")
@@ -139,12 +223,24 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
+	/*
+		Function to render an HTML template.
+
+		Parameters:
+			- w (http.ResponseWriter): HTTP response writer.
+			- tmpl (string): Name of the HTML template.
+			- data (any): Data to pass to the template.
+
+		Returns:
+			Nothing.
+	*/
 	// str := "web/" + tmpl + ".html"
 	htmlstr := tmpl + ".html"
-	// if _, err := os.Stat(str); err != nil {
-	//http.Redirect(w, r, "/notfound", http.StatusNotFound)
-	//	return
-	//}
+	// _, err := os.Stat(str); 
+	// if err != nil {
+	// 	http.Redirect(w, r, "/notfound", http.StatusNotFound)
+	// 		return
+	// }
 	err := templates.ExecuteTemplate(w, htmlstr, data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -152,6 +248,9 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
 }
 
 func Main() {
+	/*
+		Function serving as the entry point for the web application.
+	*/
 	var handler http.Handler
 	port := os.Getenv("WEB_PORT")
 	if port == ""{
