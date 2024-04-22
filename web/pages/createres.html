@@ -36,9 +36,10 @@
                 <option value="{{.Id}}">{{.Name}} : </option>
                 {{end}}
               </select>
-              <label for="date"
-                >Merci d'entrer la date que vous aimeriez réserver pour la salle :</label>
+              <label for="date">Merci d'entrer la date de début que vous aimeriez réserver pour la salle :</label>
               <input type="datetime-local" class="form-control" id="date" name="date" />
+              <label for="date2">Merci d'entrer la date de fin que vous aimeriez réserver pour la salle :</label>
+              <input type="datetime-local" class="form-control" id="date2" name="date2" />
               <input class="btn btn-success" type="submit" value="Réserver" />
             </form>
             <div>
@@ -52,8 +53,9 @@
       document.querySelector("form").addEventListener("submit", function (e) {
         e.preventDefault();
         const date = document.querySelector("#date").value;
+        const date2 = document.querySelector("#date2").value;
         const room = document.querySelector("#room").value;
-        window.location.href = `/create_reservation?date=${date}&room=${room}`;
+        window.location.href = `/create_reservation?date=${date}&date2=${date2}&room=${room}`;
       });
     </script>
   </body>

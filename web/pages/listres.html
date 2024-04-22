@@ -33,7 +33,7 @@
             <tr>
                 <td>{{.Id}}</td>
                 <td>{{.RoomId}} : {{.RoomName }}</td>
-                <td>{{.Date}}</td>
+                <td>{{.DateDebut}} - {{.DateFin}}</td>
                 <td><a href="/cancel_reservation?room={{ .Id }}">Annuler la réservation</a></td>
             </tr>
             {{else}}
