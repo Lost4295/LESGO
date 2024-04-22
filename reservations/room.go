@@ -170,12 +170,14 @@ func ListReservations() []Reservation {
 	}
 	var reserv Reservation
 	for rows.Next() {
+		// Retrieves reservation data into a reservation object
 		err = rows.Scan(&reserv.Id, &reserv.RoomId, &reserv.DateDebut, &reserv.DateFin)
 		if err != nil {
 			fmt.Println(ERROR)
 			fmt.Println(err)
 			return reservations
 		}
+		// Retrieving the name of the room concerned by the reservation
 		rows2, err := db.Query(SELECT, reserv.RoomId)
 		if err != nil {
 			fmt.Println(ERROR)
@@ -209,16 +211,17 @@ func ListReservationsByDate(date string) []Reservation {
 	defer db.Close()
 	var Reservations []Reservation
 	val := ConvertStringToDatetime(date)
-	// TODO Voir pour faire un between plutôt sur la journée
 	rows, _ := db.Query("SELECT id, room_id, date_debut, date_fin FROM reservation WHERE date_debut = ? OR date_fin = ?", val, val)
 	for rows.Next() {
 		var reservation Reservation
+		// Retrieves reservation data into a reservation object
 		err := rows.Scan(&reservation.Id, &reservation.RoomId, &reservation.DateDebut, &reservation.DateFin)
 		if err != nil {
 			fmt.Println(ERROR)
 			fmt.Println(err)
 			return Reservations
 		}
+		// Retrieving the name of the room concerned by the reservation
 		rows2, err := db.Query(SELECT, reservation.RoomId)
 		if err != nil {
 			fmt.Println(ERROR)
