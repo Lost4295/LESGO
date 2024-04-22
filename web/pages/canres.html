@@ -34,7 +34,7 @@
               >
               <select name="room" id="room" class="form-control">
                 {{range .}}
-                <option value="{{.Id}}">{{.RoomName}}, le {{.Date}}</option>
+                <option value="{{.Id}}">{{.RoomName}}, du {{.DateDebut}} au {{.DateFin}}</option>
                 {{end}}
               </select>
               <input type="submit" class="btn btn-success" value="Entrer" />
