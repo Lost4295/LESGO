@@ -210,10 +210,10 @@ func ListReservationsByDate(date string) []Reservation {
 	var Reservations []Reservation
 	val := ConvertStringToDatetime(date)
 	// TODO Voir pour faire un between plutôt sur la journée
-	rows, _ := db.Query("SELECT id, room_id, date_debut, date_fin FROM reservation WHERE date_debut = ? OR WHERE date_fin = ?", val)
+	rows, _ := db.Query("SELECT id, room_id, date_debut, date_fin FROM reservation WHERE date_debut = ? OR date_fin = ?", val, val)
 	for rows.Next() {
 		var reservation Reservation
-		err := rows.Scan(&reservation.Id, &reservation.RoomId, &reservation.DateDebut)
+		err := rows.Scan(&reservation.Id, &reservation.RoomId, &reservation.DateDebut, &reservation.DateFin)
 		if err != nil {
 			fmt.Println(ERROR)
 			fmt.Println(err)
@@ -250,7 +250,6 @@ func ListReservationsByRoom(id int) []Reservation {
 	db, _ := db.Connect(os.Getenv("USER"), os.Getenv("PASSWORD"))
 	defer db.Close()
 	var Reservations []Reservation
-	// TODO Voir pour faire un between plutôt sur la journée
 	rows, _ := db.Query("SELECT id, room_id, date_debut, date_fin FROM reservation WHERE room_id = ?", id)
 	for rows.Next() {
 		var reservation Reservation
