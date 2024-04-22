@@ -10,12 +10,14 @@ import (
 	"time"
 )
 
+// Room represents a room with its properties.
 type Room struct {
 	Id       int    `json:"id"`
 	Name     string `json:"name"`
 	Capacity int    `json:"capacity"`
 }
 
+// Reservation represents a reservation with its properties.
 type Reservation struct {
 	Id        int    `json:"id"`
 	RoomId    int    `json:"room_id"`
@@ -24,10 +26,11 @@ type Reservation struct {
 	RoomName  string `json:"room_name"`
 }
 
+// Constants for error messages and color codes.
 const (
-	ERROR       = "Erreur lors de la récupération des réservations"
+	ERROR       = "Error occurred while fetching reservations"
 	SELECT      = "SELECT name FROM room WHERE id = ?"
-	ERRSELECTED = "La salle est déjà réservée pendant les dates sélectionnées."
+	ERRSELECTED = "The room is already booked during the selected dates."
 	RED         = "\033[31;01;51m"
 	END         = "\033[0m"
 )
@@ -37,7 +40,7 @@ func ConvertStringToDatetime(value string) time.Time {
 	date, err := time.Parse(layout, strings.Replace(value, "T", " ", 1))
 	if err != nil {
 		fmt.Println(err)
-		panic("TEMPORAIRE" + value) // check si la string est bien faite
+		panic(value)
 	}
 	return date
 }
@@ -47,6 +50,14 @@ func ConvertDatetimeToString(datetime time.Time) string {
 }
 
 func ListRooms() []Room {
+	/*
+		Function to retrieve and return all rooms.
+
+		Returns:
+			[]Room: array of Room objects representing rooms.
+	*/
+
+	// Connection to the database with the identifiers entered in the .env file
 	db, _ := db.Connect(os.Getenv("USER"), os.Getenv("PASSWORD"))
 	defer db.Close()
 	rows, _ := db.Query("SELECT id, name, capacity FROM room")
@@ -60,10 +71,22 @@ func ListRooms() []Room {
 }
 
 func CreateReservation(id int, date time.Time, date2 time.Time) int {
+	/*
+		Function to create a reservation.
+
+		Parameters:
+			- id (int): ID of the room for the reservation.
+			- date (time.Time): start date of the reservation.
+			- date2 (time.Time): end date of the reservation.
+
+		Returns:
+			int: 1 if the reservation is successful, 0 otherwise.
+	*/
+
 	db, _ := db.Connect(os.Getenv("USER"), os.Getenv("PASSWORD"))
 	defer db.Close()
 
-	//TODO Check if r
+	// Code to check if the reservation is available on this date
 	rows, err := db.Query("SELECT date_debut, date_fin FROM reservation where room_id= ?", id)
 	if err != nil {
 		fmt.Println(ERROR)
@@ -80,7 +103,9 @@ func CreateReservation(id int, date time.Time, date2 time.Time) int {
 			return 0
 		}
 		if date.Before(ConvertStringToDatetime(truncateSeconds(dateDebut))) && date2.After(ConvertStringToDatetime(truncateSeconds(dateDebut))) && date2.Before(ConvertStringToDatetime(truncateSeconds(dateFin))) {
+			// Display of constants to have color + predefined errors
 			fmt.Println(RED, ERRSELECTED, END)
+			// Return of 0 to indicate that there was an error
 			return 0
 		}
 		if date.Before(ConvertStringToDatetime(truncateSeconds(dateFin))) && date.After(ConvertStringToDatetime(truncateSeconds(dateDebut))) && date2.After(ConvertStringToDatetime(truncateSeconds(dateFin))) {
@@ -93,6 +118,7 @@ func CreateReservation(id int, date time.Time, date2 time.Time) int {
 		}
 	}
 
+	// If no error has been found, the reservation is created in the database
 	_, err = db.Exec("INSERT INTO reservation (room_id, date_debut, date_fin) VALUES (?, ?, ?)", id, date, date2)
 	if err != nil {
 		return 0
@@ -101,6 +127,15 @@ func CreateReservation(id int, date time.Time, date2 time.Time) int {
 }
 
 func DeleteReservation(id int) int {
+	/*
+		Function to delete a reservation.
+
+		Parameters:
+			- id (int): ID of the reservation to delete.
+
+		Returns:
+			int: 1 if the deletion is successful, 0 if the reservation doesn't exist, -1 if an error occurs.
+	*/
 	db, _ := db.Connect(os.Getenv("USER"), os.Getenv("PASSWORD"))
 	defer db.Close()
 	rows, err := db.Query("Select id FROM reservation WHERE id = ?", id)
@@ -118,6 +153,12 @@ func DeleteReservation(id int) int {
 }
 
 func ListReservations() []Reservation {
+	/*
+		Function to retrieve and return all reservations.
+
+		Returns:
+			[]Reservation: array of Reservation objects representing reservations.
+	*/
 	db, _ := db.Connect(os.Getenv("USER"), os.Getenv("PASSWORD"))
 	defer db.Close()
 	var reservations []Reservation
@@ -155,6 +196,15 @@ func ListReservations() []Reservation {
 }
 
 func ListReservationsByDate(date string) []Reservation {
+	/*
+		Function to retrieve and return reservations by date.
+
+		Parameters:
+			- date (string): Date to filter reservations.
+
+		Returns:
+			[]Reservation: Array of Reservation objects filtered by date.
+	*/
 	db, _ := db.Connect(os.Getenv("USER"), os.Getenv("PASSWORD"))
 	defer db.Close()
 	var Reservations []Reservation
@@ -188,6 +238,15 @@ func ListReservationsByDate(date string) []Reservation {
 	return Reservations
 }
 func ListReservationsByRoom(id int) []Reservation {
+	/*
+		Function to retrieve and return reservations by room.
+
+		Parameters:
+			- id (int): ID of the room to filter reservations.
+
+		Returns:
+			[]Reservation: Array of Reservation objects filtered by room.
+	*/
 	db, _ := db.Connect(os.Getenv("USER"), os.Getenv("PASSWORD"))
 	defer db.Close()
 	var Reservations []Reservation
@@ -221,6 +280,15 @@ func ListReservationsByRoom(id int) []Reservation {
 }
 
 func CheckSalle(id int) int {
+	/*
+		Function to check if a room exists.
+
+		Parameters:
+			- id (int): ID of the room to check.
+
+		Returns:
+			int: 1 if the room exists, 0 otherwise.
+	*/
 	db, _ := db.Connect(os.Getenv("USER"), os.Getenv("PASSWORD"))
 	defer db.Close()
 	rows, _ := db.Query("SELECT id FROM room WHERE id = ?", id)
