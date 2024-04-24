@@ -34,18 +34,18 @@ func main() {
 	for number != 0 {
 
 		fmt.Printf("\n%s~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%s", WHITE, END)
-		ShowMenu()
+		Show_menu()
 		fmt.Printf("%sSélectionnez une option : %s", GREEN, END)
 		scanner.Scan()
 		number, err := strconv.Atoi(scanner.Text())
 		if err != nil {
-			ShowMenu()
+			Show_menu()
 			number = -1
 			fmt.Printf("%sVeuillez entrer un nombre valide : %s", RED, END)
 			continue
 		}
 		if 0 > number || number > 8 {
-			ShowMenu()
+			Show_menu()
 			fmt.Printf("%sVeuillez entrer un nombre entre 0 et 8 : %s", RED, END)
 			continue
 		}
@@ -55,33 +55,33 @@ func main() {
 		}
 		switch number {
 		case 0:
-			handleZero()
+			handle_zero()
 		case 1:
-			handleOne()
+			handle_one()
 		case 2:
-			err = handleTwo(scanner)
+			err = handle_two(scanner)
 			if err != nil {
 				fmt.Println(RED, "Annulation", END)
 				continue
 			}
 		case 3:
-			err = handleThree(scanner)
+			err = handle_three(scanner)
 			if err != nil {
 				fmt.Println(RED, "Annulation", END)
 				continue
 			}
 		case 4:
-			handleFour()
+			handle_four()
 		case 5:
-			err = handleFive(scanner)
+			err = handle_five(scanner)
 			if err != nil {
 				fmt.Println(RED, "Annulation", END)
 				continue
 			}
 		case 6:
-			handleSix(scanner)
+			handle_six(scanner)
 		case 7:
-			handleSeven(scanner)
+			handle_seven(scanner)
 		}
 	}
 }

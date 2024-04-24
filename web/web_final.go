@@ -23,7 +23,7 @@ const (
 	LR    = "/list_reservations"
 )
 
-func homeHandler(w http.ResponseWriter, r *http.Request) {
+func home_handler(w http.ResponseWriter, r *http.Request) {
 	/*
 		Function to handle requests to the home page.
 
@@ -37,12 +37,12 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	V := os.Getenv("verbose")
 	// Checks if the user has enabled logs
 	if V == "true" {
-		log.Println("executing homeHandler")
+		log.Println("executing home_handler")
 	}
-	renderTemplate(w, "home", nil)
+	render_template(w, "home", nil)
 }
 
-func byeHandler(w http.ResponseWriter, r *http.Request) {
+func bye_handler(w http.ResponseWriter, r *http.Request) {
 	/*
 		Function to handle requests to terminate the server.
 
@@ -55,12 +55,12 @@ func byeHandler(w http.ResponseWriter, r *http.Request) {
 	*/
 	V := os.Getenv("verbose")
 	if V == "true" {
-		log.Println("executing byeHandler")
+		log.Println("executing bye_handler")
 	}
-	renderTemplate(w, "byebye", nil)
+	render_template(w, "byebye", nil)
 }
 
-func roomsHandler(w http.ResponseWriter, r *http.Request) {
+func rooms_handler(w http.ResponseWriter, r *http.Request) {
 	/*
 		Function to handle requests to list rooms.
 
@@ -73,13 +73,13 @@ func roomsHandler(w http.ResponseWriter, r *http.Request) {
 	*/
 	V := os.Getenv("verbose")
 	if V == "true" {
-		log.Println("executing roomsHandler")
+		log.Println("executing rooms_handler")
 	}
-	data := res.ListRooms()
-	renderTemplate(w, "rooms", data)
+	data := res.List_rooms()
+	render_template(w, "rooms", data)
 }
 
-func availableRoomsHandler(w http.ResponseWriter, r *http.Request) {
+func available_rooms_handler(w http.ResponseWriter, r *http.Request) {
 	/*
 		Function to handle requests to list available rooms.
 
@@ -92,7 +92,7 @@ func availableRoomsHandler(w http.ResponseWriter, r *http.Request) {
 	*/
 	V := os.Getenv("verbose")
 	if V == "true" {
-		log.Println("executing availableRoomsHandler")
+		log.Println("executing available_rooms_handler")
 	}
 	// Retrieves the parameters/filters of the query
 	hasDate := r.URL.Query().Has("date")
@@ -100,25 +100,25 @@ func availableRoomsHandler(w http.ResponseWriter, r *http.Request) {
 	hasRoom := r.URL.Query().Has("room")
 	room := r.URL.Query().Get("room")
 	var data = []any{}
-	data = append(data, res.ListRooms())
+	data = append(data, res.List_rooms())
 	if (hasDate && date != "") || (hasRoom && room != "") {
 		log.Printf("got POST request. date(%t)=%s, room(%t)=%s\n",
 			hasDate, date, hasRoom, room)
 		// If a date filter is entered, we retrieve the reservations by date, otherwise by room
 		if date != "" {
-			data = append(data, res.ListReservationsByDate(date))
+			data = append(data, res.List_reservations_by_date(date))
 		} else {
 			i, _ := strconv.Atoi(room)
-			data = append(data, res.ListReservationsByRoom(i))
+			data = append(data, res.List_reservations_by_room(i))
 		}
 	} else {
-		data = append(data, res.ListRooms())
+		data = append(data, res.List_rooms())
 	}
 	fmt.Println(data)
-	renderTemplate(w, "avrooms", data)
+	render_template(w, "avrooms", data)
 }
 
-func cancelReservationHandler(w http.ResponseWriter, r *http.Request) {
+func cancel_reservation_handler(w http.ResponseWriter, r *http.Request) {
 	/*
 		Function to handle requests to cancel a reservation.
 
@@ -131,7 +131,7 @@ func cancelReservationHandler(w http.ResponseWriter, r *http.Request) {
 	*/
 	V := os.Getenv("verbose")
 	if V == "true" {
-		log.Println("executing cancelReservationHandler")
+		log.Println("executing cancel_reservation_handler")
 	}
 	hasroom := r.URL.Query().Has("room")
 	room := r.URL.Query().Get("room")
@@ -139,16 +139,16 @@ func cancelReservationHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("got POST request. room(%t)=%s\n",
 			hasroom, room)
 		i, _ := strconv.Atoi(room)
-		res.DeleteReservation(i)
+		res.Delete_reservation(i)
 		// Returns to the reservations list page (content in the constant)
 		http.Redirect(w, r, LR, http.StatusFound)
 	} else {
-		data := res.ListReservations()
-		renderTemplate(w, "canres", data)
+		data := res.List_reservations()
+		render_template(w, "canres", data)
 	}
 }
 
-func createReservationHandler(w http.ResponseWriter, r *http.Request) {
+func create_reservation_handler(w http.ResponseWriter, r *http.Request) {
 	/*
 		Function to handle requests to create a reservation.
 
@@ -161,7 +161,7 @@ func createReservationHandler(w http.ResponseWriter, r *http.Request) {
 	*/
 	V := os.Getenv("verbose")
 	if V == "true" {
-		log.Println("executing createReservationHandler")
+		log.Println("executing create_reservation_handler")
 	}
 
 	hasDate := r.URL.Query().Has("date")
@@ -177,15 +177,15 @@ func createReservationHandler(w http.ResponseWriter, r *http.Request) {
 			hasDate, date,
 			hasDate2, date2,
 			hasRoom, room, e)
-		res.CreateReservation(e, res.ConvertStringToDatetime(date), res.ConvertStringToDatetime(date2))
+		res.Create_reservation(e, res.Convert_string_to_datetime(date), res.Convert_string_to_datetime(date2))
 		http.Redirect(w, r, LR, http.StatusFound)
 	} else {
-		data := res.ListRooms()
-		renderTemplate(w, "createres", data)
+		data := res.List_rooms()
+		render_template(w, "createres", data)
 	}
 }
 
-func listReservationsHandler(w http.ResponseWriter, r *http.Request) {
+func list_reservations_handler(w http.ResponseWriter, r *http.Request) {
 	/*
 		Function to handle requests to list reservations.
 
@@ -198,13 +198,13 @@ func listReservationsHandler(w http.ResponseWriter, r *http.Request) {
 	*/
 	V := os.Getenv("verbose")
 	if V == "true" {
-		log.Println("executing listReservationsHandler")
+		log.Println("executing list_reservations_handler")
 	}
-	data := res.ListReservations()
-	renderTemplate(w, "listres", data)
+	data := res.List_reservations()
+	render_template(w, "listres", data)
 }
 
-func notFoundHandler(w http.ResponseWriter, r *http.Request) {
+func not_found_handler(w http.ResponseWriter, r *http.Request) {
 	/*
 		Function to handle requests for non-existent routes.
 
@@ -217,12 +217,12 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	*/
 	V := os.Getenv("verbose")
 	if V == "true" {
-		log.Println("executing notFoundHandler")
+		log.Println("executing notFound_handler")
 	}
-	renderTemplate(w, "notfound", nil)
+	render_template(w, "notfound", nil)
 }
 
-func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
+func render_template(w http.ResponseWriter, tmpl string, data any) {
 	/*
 		Function to render an HTML template.
 
@@ -257,30 +257,30 @@ func Main() {
 		port = "80"
 	}
 	srv := &http.Server{Addr: ":"+port, Handler: handler}
-	// http.HandleFunc("/", homeHandler)
-	http.HandleFunc("/home", homeHandler)
+	// http.HandleFunc("/", home_handler)
+	http.HandleFunc("/home", home_handler)
 	http.HandleFunc("/die", func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Bye bye", http.StatusNotFound)
 		context := context.Background()
 		srv.Shutdown(context)
 	})
-	http.HandleFunc("/list_salles", roomsHandler)
-	http.HandleFunc("/available_salles", availableRoomsHandler)
-	http.HandleFunc("/notfound", notFoundHandler)
-	http.HandleFunc("/create_reservation", createReservationHandler)
-	http.HandleFunc("/cancel_reservation", cancelReservationHandler)
-	http.HandleFunc(LR, listReservationsHandler)
-	http.HandleFunc("/byebye", byeHandler)
+	http.HandleFunc("/list_salles", rooms_handler)
+	http.HandleFunc("/available_salles", available_rooms_handler)
+	http.HandleFunc("/notfound", not_found_handler)
+	http.HandleFunc("/create_reservation", create_reservation_handler)
+	http.HandleFunc("/cancel_reservation", cancel_reservation_handler)
+	http.HandleFunc(LR, list_reservations_handler)
+	http.HandleFunc("/byebye", bye_handler)
 	V := os.Getenv("verbose")
 	if V == "true" {
 		log.Println("Listening on :"+port)
 	}
 
 	go func() {
-		httpError := srv.ListenAndServe()
-		if httpError != nil {
+		http_error := srv.ListenAndServe()
+		if http_error != nil {
 			if V == "true" {
-				log.Println(ROUGE, "While serving HTTP: ", END, httpError)
+				log.Println(ROUGE, "While serving HTTP: ", END, http_error)
 			}
 		}
 	}()

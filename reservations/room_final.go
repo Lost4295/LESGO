@@ -12,18 +12,18 @@ import (
 
 // Room represents a room with its properties.
 type Room struct {
-	id       int    `json:"id"`
-	name     string `json:"name"`
-	capacity int    `json:"capacity"`
+	Id       int    `json:"id"`
+	Name     string `json:"name"`
+	Capacity int    `json:"capacity"`
 }
 
 // Reservation represents a reservation with its properties.
 type Reservation struct {
-	id        int    `json:"id"`
-	room_id   int    `json:"room_id"`
-	date_debut string `json:"date_debut"`
-	date_fin   string `json:"date_fin"`
-	room_name  string `json:"room_name"`
+	Id        int    `json:"id"`
+	Room_id   int    `json:"room_id"`
+	Date_debut string `json:"date_debut"`
+	Date_fin   string `json:"date_fin"`
+	Room_name  string `json:"room_name"`
 }
 
 // Constants for error messages and color codes.
@@ -35,7 +35,7 @@ const (
 	END         = "\033[0m"
 )
 
-func convert_string_to_datetime(value string) time.Time {
+func Convert_string_to_datetime(value string) time.Time {
 	layout := "2006-01-02 15:04"
 	date, err := time.Parse(layout, strings.Replace(value, "T", " ", 1))
 	if err != nil {
@@ -45,11 +45,11 @@ func convert_string_to_datetime(value string) time.Time {
 	return date
 }
 
-func convert_datetime_to_string(datetime time.Time) string {
+func Convert_datetime_to_string(datetime time.Time) string {
 	return datetime.Format("2006-01-02 15:04")
 }
 
-func list_rooms() []Room {
+func List_rooms() []Room {
 	/*
 		Function to retrieve and return all rooms.
 
@@ -64,13 +64,13 @@ func list_rooms() []Room {
 	var rooms []Room
 	for rows.Next() {
 		var room Room
-		_ = rows.Scan(&room.id, &room.name, &room.capacity)
+		_ = rows.Scan(&room.Id, &room.Name, &room.Capacity)
 		rooms = append(rooms, room)
 	}
 	return rooms
 }
 
-func create_reservation(id int, date time.Time, date2 time.Time) int {
+func Create_reservation(id int, date time.Time, date2 time.Time) int {
 	/*
 		Function to create a reservation.
 
@@ -102,17 +102,17 @@ func create_reservation(id int, date time.Time, date2 time.Time) int {
 			fmt.Println(err)
 			return 0
 		}
-		if date.Before(convert_string_to_datetime(truncate_seconds(date_debut))) && date2.After(convert_string_to_datetime(truncate_seconds(date_debut))) && date2.Before(convert_string_to_datetime(truncate_seconds(date_fin))) {
+		if date.Before(Convert_string_to_datetime(Truncate_seconds(date_debut))) && date2.After(Convert_string_to_datetime(Truncate_seconds(date_debut))) && date2.Before(Convert_string_to_datetime(Truncate_seconds(date_fin))) {
 			// Display of constants to have color + predefined errors
 			fmt.Println(RED, ERRSELECTED, END)
 			// Return of 0 to indicate that there was an error
 			return 0
 		}
-		if date.Before(convert_string_to_datetime(truncate_seconds(date_fin))) && date.After(convert_string_to_datetime(truncate_seconds(date_debut))) && date2.After(convert_string_to_datetime(truncate_seconds(date_fin))) {
+		if date.Before(Convert_string_to_datetime(Truncate_seconds(date_fin))) && date.After(Convert_string_to_datetime(Truncate_seconds(date_debut))) && date2.After(Convert_string_to_datetime(Truncate_seconds(date_fin))) {
 			fmt.Println(RED, ERRSELECTED, END)
 			return 0
 		}
-		if date.After(convert_string_to_datetime(truncate_seconds(date_debut))) && date2.Before(convert_string_to_datetime(truncate_seconds(date_fin))) {
+		if date.After(Convert_string_to_datetime(Truncate_seconds(date_debut))) && date2.Before(Convert_string_to_datetime(Truncate_seconds(date_fin))) {
 			fmt.Println(RED, ERRSELECTED, END)
 			return 0
 		}
@@ -126,7 +126,7 @@ func create_reservation(id int, date time.Time, date2 time.Time) int {
 	return 1
 }
 
-func delete_reservation(id int) int {
+func Delete_reservation(id int) int {
 	/*
 		Function to delete a reservation.
 
@@ -152,7 +152,7 @@ func delete_reservation(id int) int {
 	return 1
 }
 
-func list_reservations() []Reservation {
+func List_reservations() []Reservation {
 	/*
 		Function to retrieve and return all reservations.
 
@@ -171,21 +171,21 @@ func list_reservations() []Reservation {
 	var reserv Reservation
 	for rows.Next() {
 		// Retrieves reservation data into a reservation object
-		err = rows.Scan(&reserv.id, &reserv.room_id, &reserv.date_debut, &reserv.date_fin)
+		err = rows.Scan(&reserv.Id, &reserv.Room_id, &reserv.Date_debut, &reserv.Date_fin)
 		if err != nil {
 			fmt.Println(ERROR)
 			fmt.Println(err)
 			return reservations
 		}
 		// Retrieving the name of the room concerned by the reservation
-		rows2, err := db.Query(SELECT, reserv.room_id)
+		rows2, err := db.Query(SELECT, reserv.Room_id)
 		if err != nil {
 			fmt.Println(ERROR)
 			fmt.Println(err)
 			return reservations
 		}
 		for rows2.Next() {
-			err = rows2.Scan(&reserv.room_name)
+			err = rows2.Scan(&reserv.Room_name)
 			if err != nil {
 				fmt.Println(ERROR)
 				fmt.Println(err)
@@ -197,7 +197,7 @@ func list_reservations() []Reservation {
 	return reservations
 }
 
-func list_reservations_by_date(date string) []Reservation {
+func List_reservations_by_date(date string) []Reservation {
 	/*
 		Function to retrieve and return reservations by date.
 
@@ -210,26 +210,26 @@ func list_reservations_by_date(date string) []Reservation {
 	db, _ := db.Connect(os.Getenv("USER"), os.Getenv("PASSWORD"))
 	defer db.Close()
 	var Reservations []Reservation
-	val := convert_string_to_datetime(date)
+	val := Convert_string_to_datetime(date)
 	rows, _ := db.Query("SELECT id, room_id, date_debut, date_fin FROM reservation WHERE date_debut = ? OR date_fin = ?", val, val)
 	for rows.Next() {
 		var reservation Reservation
 		// Retrieves reservation data into a reservation object
-		err := rows.Scan(&reservation.id, &reservation.room_id, &reservation.date_debut, &reservation.date_fin)
+		err := rows.Scan(&reservation.Id, &reservation.Room_id, &reservation.Date_debut, &reservation.Date_fin)
 		if err != nil {
 			fmt.Println(ERROR)
 			fmt.Println(err)
 			return Reservations
 		}
 		// Retrieving the name of the room concerned by the reservation
-		rows2, err := db.Query(SELECT, reservation.room_id)
+		rows2, err := db.Query(SELECT, reservation.Room_id)
 		if err != nil {
 			fmt.Println(ERROR)
 			fmt.Println(err)
 			return Reservations
 		}
 		for rows2.Next() {
-			err = rows2.Scan(&reservation.room_name)
+			err = rows2.Scan(&reservation.Room_name)
 			if err != nil {
 				fmt.Println(ERROR)
 				fmt.Println(err)
@@ -240,7 +240,7 @@ func list_reservations_by_date(date string) []Reservation {
 	}
 	return Reservations
 }
-func list_reservations_by_room(id int) []Reservation {
+func List_reservations_by_room(id int) []Reservation {
 	/*
 		Function to retrieve and return reservations by room.
 
@@ -256,7 +256,7 @@ func list_reservations_by_room(id int) []Reservation {
 	rows, _ := db.Query("SELECT id, room_id, date_debut, date_fin FROM reservation WHERE room_id = ?", id)
 	for rows.Next() {
 		var reservation Reservation
-		err := rows.Scan(&reservation.id, &reservation.room_id, &reservation.date_debut, &reservation.date_fin)
+		err := rows.Scan(&reservation.Id, &reservation.Room_id, &reservation.Date_debut, &reservation.Date_fin)
 		if err != nil {
 			fmt.Println(ERROR)
 			fmt.Println(err)
@@ -269,7 +269,7 @@ func list_reservations_by_room(id int) []Reservation {
 			return Reservations
 		}
 		for rows2.Next() {
-			err = rows2.Scan(&reservation.room_name)
+			err = rows2.Scan(&reservation.Room_name)
 			if err != nil {
 				fmt.Println(ERROR)
 				fmt.Println(err)
@@ -281,7 +281,7 @@ func list_reservations_by_room(id int) []Reservation {
 	return Reservations
 }
 
-func check_salle(id int) int {
+func Check_salle(id int) int {
 	/*
 		Function to check if a room exists.
 

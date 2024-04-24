@@ -30,7 +30,7 @@ func Connect(user string, password string) (*sql.DB, error) {
 	return db, nil
 }
 
-func createTable(db *sql.DB, table string, queryParams string) error {
+func create_table(db *sql.DB, table string, queryParams string) error {
 	/*
 		Function to create a table in the database.
 
@@ -51,7 +51,7 @@ func createTable(db *sql.DB, table string, queryParams string) error {
 	return nil
 }
 
-func initDB(db *sql.DB) (*sql.DB, error) {
+func init_db(db *sql.DB) (*sql.DB, error) {
 	/*
 		Function to initialize the database with required tables.
 
@@ -61,18 +61,18 @@ func initDB(db *sql.DB) (*sql.DB, error) {
 		Returns:
 			(*sql.DB, error): Database connection object and any error encountered.
 	*/
-	err := createTable(db, "room", "name VARCHAR(255), capacity INT")
+	err := create_table(db, "room", "name VARCHAR(255), capacity INT")
 	if err != nil {
 		return db, err
 	}
-	err = createTable(db, "reservation", "room_id INT, date_debut DATETIME, date_fin DATETIME, FOREIGN KEY (room_id) REFERENCES room(id)")
+	err = create_table(db, "reservation", "room_id INT, date_debut DATETIME, date_fin DATETIME, FOREIGN KEY (room_id) REFERENCES room(id)")
 	if err != nil {
 		return db, err
 	}
 	return db, nil
 }
 
-func addRoom(db *sql.DB, name string, capacity int) error {
+func add_room(db *sql.DB, name string, capacity int) error {
 	/*
 		Function to add a room to the database.
 

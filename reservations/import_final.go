@@ -9,12 +9,12 @@ import (
 	"strings"
 )
 
-func truncate_seconds(date_time string) string {
+func Truncate_seconds(date_time string) string {
 	parts := strings.Split(date_time, " ")
 	return parts[0] + " " + parts[1][:5]
 }
 
-func import_reserv_from_json(filename string) ([]Reservation, error) {
+func Import_reserv_from_json(filename string) ([]Reservation, error) {
 	/*
 		Fonction pour importer des réservations à partir d'un fichier JSON.
 
@@ -41,13 +41,13 @@ func import_reserv_from_json(filename string) ([]Reservation, error) {
 
 	// Créer des réservations à partir des données importées
 	for _, reservation := range reservations {
-		create_reservation(reservation.RoomId, convert_string_to_datetime(truncate_seconds(reservation.DateDebut)), convert_string_to_datetime(truncate_seconds(reservation.DateFin)))
+		Create_reservation(reservation.Room_id, Convert_string_to_datetime(Truncate_seconds(reservation.Date_debut)), Convert_string_to_datetime(Truncate_seconds(reservation.Date_fin)))
 	}
 
 	return reservations, nil
 }
 
-func import_reserv_from_csv(filename string) ([]Reservation, error) {
+func Import_reserv_from_csv(filename string) ([]Reservation, error) {
 	/*
 		Fonction pour importer des réservations à partir d'un fichier CSV.
 
@@ -103,20 +103,20 @@ func import_reserv_from_csv(filename string) ([]Reservation, error) {
 		// Convertir les données
 		id, _ := strconv.Atoi(id_str)
 		room_id, _ := strconv.Atoi(room_id_str)
-		date := truncate_seconds(date_str)
-		date2 := truncate_seconds(date_str2)
-		date := convert_string_to_datetime(date)
-		date2 := convert_string_to_datetime(date2)
+		datet := Truncate_seconds(date_str)
+		date2t := Truncate_seconds(date_str2)
+		date := Convert_string_to_datetime(datet)
+		date2 := Convert_string_to_datetime(date2t)
 
 		// Créer une réservation
-		create_reservation(room_id, date, date2)
+		Create_reservation(room_id, date, date2)
 
 		reservation := Reservation{
 			Id:        id,
-			RoomId:    room_id,
-			DateDebut: date,
-			DateFin:   date2,
-			RoomName:  room_name,
+			Room_id:    room_id,
+			Date_debut: date_str,
+			Date_fin:   date_str2,
+			Room_name:  room_name,
 		}
 
 		reservations = append(reservations, reservation)

@@ -12,7 +12,7 @@ const (
 	ROUGE      = "\033[31;01;51m"
 )
 
-func CheckConnection() {
+func Check_connection() {
 	/*
 		Function allowing you to see if the database is accessible and if the creation went well
 	*/
@@ -21,7 +21,7 @@ func CheckConnection() {
 		log.Fatalln(WHITEONRED, "Une erreur est survenue !", END, "\n\n", err, ROUGE, "\n\nEssayez de voir si la base de données est bien accessible en vérifiant que le conteneur docker est bien lancé avec 'docker compose up'.", END)
 	}
 	defer db.Close()
-	/*db*/ _, err = initDB(db)
+	/*db*/ _, err = init_db(db)
 	if err != nil {
 		log.Fatalln(WHITEONRED, "Une erreur est survenue !", END, "\n\n", err, ROUGE, "\n\nEssayez de voir si la base de données est bien accessible en vérifiant que le conteneur docker est bien lancé avec 'docker compose up'.", END)
 	}

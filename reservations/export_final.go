@@ -6,10 +6,9 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
 )
 
-func export_reserv_to_json(file_name string) {
+func Export_reserv_to_json(file_name string) {
 	/*
 		Fonction pour exporter les données de réservation au format JSON
 
@@ -19,7 +18,7 @@ func export_reserv_to_json(file_name string) {
 		Retour :
 			Rien
 	*/
-	reserv := list_reservations()
+	reserv := List_reservations()
 
 	// Convertir les données au format JSON
 	json_data, _ := json.Marshal(reserv)
@@ -32,7 +31,7 @@ func export_reserv_to_json(file_name string) {
 	fmt.Println("Fichier d'export des réservations en JSON créé")
 }
 
-func export_reserv_to_csv(file_name string) {
+func Export_reserv_to_csv(file_name string) {
 	/*
 		Fonction pour exporter les données de réservation au format CSV.
 
@@ -42,7 +41,7 @@ func export_reserv_to_csv(file_name string) {
 		Retour :
 			Rien.
 	*/
-	reserv := list_reservations()
+	reserv := List_reservations()
 
 	// Création du fichier destinataire des données CSV
 	file, err := os.Create(file_name + ".csv")
@@ -68,10 +67,10 @@ func export_reserv_to_csv(file_name string) {
 	for _, r := range reserv {
 		record := []string{
 			strconv.Itoa(r.Id),
-			strconv.Itoa(r.RoomId),
-			r.DateDebut,
-			r.DateFin,
-			r.RoomName,
+			strconv.Itoa(r.Room_id),
+			r.Date_debut,
+			r.Date_fin,
+			r.Room_name,
 		}
 		if err := writer.Write(record); err != nil {
 			fmt.Println("Erreur lors de l'écriture des données CSV :", err)
