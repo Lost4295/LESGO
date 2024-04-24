@@ -80,3 +80,6 @@ Si vous nécessitez le besoin de dockeriser la connexion à votre base de donné
 - [@LumineWollah](https://www.github.com/LumineWollah)
 - [@Leopold194](https://www.github.com/Leopold194)
 
+### Contributions 
+ Voir notre [backlog](https://github.com/users/Lost4295/projects/4/)
+
