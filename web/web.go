@@ -233,7 +233,7 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
 			Nothing.
 			
 	*/
-	var fun = os.Getenv("fun");
+	fun := os.Getenv("FUN");
 	a := ""
 	if fun == "true" {
 		a="fun"
@@ -244,7 +244,7 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
 		"web/pages/createres"+a+".html", "web/pages/rooms"+a+".html",
 		"web/pages/listres"+a+".html", "web/pages/notfound"+a+".html"))
 	
-	htmlstr := tmpl + ".html"
+	htmlstr := tmpl +a+ ".html"
 	err := templates.ExecuteTemplate(w, htmlstr, data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
