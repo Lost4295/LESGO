@@ -28,7 +28,7 @@ func Clear() {
 }
 
 func Start() {
-	var verbose, clear, noWeb, noCli bool = false, false, false, false
+	var verbose, clear, noWeb, noCli, FUN bool = false, false, false, false, false
 	if slices.Contains(os.Args, "-v") || slices.Contains(os.Args, "--verbose") {
 		verbose = true
 	}
@@ -40,6 +40,9 @@ func Start() {
 	}
 	if slices.Contains(os.Args, "-nc") || slices.Contains(os.Args, "--no-cli") {
 		noCli = true
+	}
+	if slices.Contains(os.Args, "-f") || slices.Contains(os.Args, "--fun") {
+		FUN = true
 	}
 	err := godotenv.Load(".env")
 	if err != nil {
@@ -72,7 +75,14 @@ func Start() {
 	} else {
 		clear, _ = strconv.ParseBool(check)
 	}
-
+	val = strconv.FormatBool(FUN)
+	check = os.Getenv("FUN")
+	if check != val && FUN {
+		fmt.Println("Setting FUN to ", val)
+		os.Setenv("FUN", val)
+	} else {
+		FUN, _ = strconv.ParseBool(check)
+	}
 	val = strconv.FormatBool(noWeb)
 	check = os.Getenv("NO_WEB")
 	if check != val && noWeb {

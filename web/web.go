@@ -11,11 +11,9 @@ import (
 	"strconv"
 )
 
-var templates = template.Must(template.ParseFiles(
-	"web/pages/home.html", "web/pages/avrooms.html",
-	"web/pages/byebye.html", "web/pages/canres.html",
-	"web/pages/createres.html", "web/pages/rooms.html",
-	"web/pages/listres.html", "web/pages/notfound.html"))
+
+
+
 
 const (
 	END   = "\033[0m"
@@ -233,14 +231,20 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
 
 		Returns:
 			Nothing.
+			
 	*/
-	// str := "web/" + tmpl + ".html"
+	var fun = os.Getenv("fun");
+	a := ""
+	if fun == "true" {
+		a="fun"
+	}
+	var templates = template.Must(template.ParseFiles(
+		"web/pages/home"+a+".html", "web/pages/avrooms"+a+".html",
+		"web/pages/byebye"+a+".html", "web/pages/canres"+a+".html",
+		"web/pages/createres"+a+".html", "web/pages/rooms"+a+".html",
+		"web/pages/listres"+a+".html", "web/pages/notfound"+a+".html"))
+	
 	htmlstr := tmpl + ".html"
-	// _, err := os.Stat(str); 
-	// if err != nil {
-	// 	http.Redirect(w, r, "/notfound", http.StatusNotFound)
-	// 		return
-	// }
 	err := templates.ExecuteTemplate(w, htmlstr, data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -248,6 +252,7 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
 }
 
 func Main() {
+
 	/*
 		Function serving as the entry point for the web application.
 	*/
