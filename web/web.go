@@ -274,6 +274,7 @@ func Main() {
 	V := os.Getenv("verbose")
 	if V == "true" {
 		log.Println("Listening on :"+port)
+		log.Println("You can access it here :  http://localhost:"+port+"/home")
 	}
 
 	go func() {
